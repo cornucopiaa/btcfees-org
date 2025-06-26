@@ -45,6 +45,9 @@ router.get("/docs", function(req, res, next) {
 		res.locals.categories.find(x => (x.name == category)).items.push(x);
 	});
 
+	res.locals.metaTitle = "API Documentation - BTCfees.org";
+	res.locals.metaDesc = "Access detailed documentation for BTCfees.org’s public API.";
+
 	res.render("api-docs");
 
 	next();
@@ -164,7 +167,7 @@ router.get("/tx/:txid", asyncHandler(async (req, res, next) => {
 		let results = await coreApi.getRawTransactionsWithInputs([txid], txInputLimit);
 		let outJson = results.transactions[0];
 		let txInputs = results.txInputsByTransaction[txid] || {};
-		
+
 		let inputBtc = 0;
 		if (txInputs[0]) {
 			for (let key in txInputs) {
@@ -175,10 +178,10 @@ router.get("/tx/:txid", asyncHandler(async (req, res, next) => {
 				outJson.vin[key].value = item.value;
 			}
 		}
-		
+
 		let outputBtc = 0;
-		for (let key in outJson.vout) {	
-			let item = outJson.vout[key];			
+		for (let key in outJson.vout) {
+			let item = outJson.vout[key];
 			outputBtc += item.value * global.coinConfig.baseCurrencyUnit.multiplier;
 		}
 
@@ -188,21 +191,21 @@ router.get("/tx/:txid", asyncHandler(async (req, res, next) => {
 		};
 
 		if (outJson.confirmations == null) {
-			outJson.mempool = await coreApi.getMempoolTxDetails(txid, false);		
-		} 
+			outJson.mempool = await coreApi.getMempoolTxDetails(txid, false);
+		}
 
 		if (global.specialTransactions && global.specialTransactions[txid]) {
 			let funInfo = global.specialTransactions[txid];
 			outJson.fun = funInfo;
 		}
-		
+
 		res.json(outJson);
-		
+
 	} catch(err) {
 		utils.logError("10328fwgdaqw", err);
 		res.json({success:false, error:err});
 	}
-	
+
 	next();
 
 }));
@@ -224,7 +227,7 @@ router.get("/tx/volume/24h", function(req, res, next) {
 		utils.logError("39024y484", err);
 
 		res.json({success:false, error:err});
-		
+
 		next();
 	}
 });
@@ -262,7 +265,7 @@ router.get("/blockchain/coins", asyncHandler(async (req, res, next) => {
 
 router.get("/blockchain/utxo-set", asyncHandler(async (req, res, next) => {
 	const utxoSetSummary = await coreApi.getUtxoSetSummary(true, true);
-	
+
 	res.json(utxoSetSummary);
 
 	next();
@@ -295,7 +298,7 @@ router.get("/blockchain/next-halving", asyncHandler(async (req, res, next) => {
 
 		promises.push(utils.timePromise("homepage.getBlocksByHeight", async () => {
 			const latestBlocks = await coreApi.getBlocksByHeight(blockHeights);
-			
+
 			res.locals.latestBlocks = latestBlocks;
 		}));
 
@@ -323,7 +326,7 @@ router.get("/blockchain/next-halving", asyncHandler(async (req, res, next) => {
 
 	} catch (e) {
 		utils.logError("013923hege3", e)
-		
+
 		res.json({success:false});
 
 		next();
@@ -340,7 +343,7 @@ router.get("/blockchain/next-halving", asyncHandler(async (req, res, next) => {
 
 // encountered huge volume of traffic requesting the balance for top address
 // here, from many different ips, the below page leads me to believe the addresses
-// are associated with malware and the public instance API is being abused to 
+// are associated with malware and the public instance API is being abused to
 // aid the malware - block the requests
 // ref: https://pberba.github.io/crypto/2024/09/14/malicious-browser-extension-genesis-market/
 const blacklistedAddresses = [
@@ -373,7 +376,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 		res.locals.maxTxOutputDisplayCount = config.site.addressPage.txOutputMaxDefaultDisplay;
 
-		
+
 		if (req.query.limit) {
 			limit = parseInt(req.query.limit);
 		}
@@ -389,7 +392,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 		const transactions = [];
 		const addressApiSupport = addressApi.getCurrentAddressApiFeatureSupport();
-		
+
 		const result = {};
 
 		let addressEncoding = "unknown";
@@ -497,7 +500,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		}, perfResults));
 
 		await utils.awaitPromises(promises);
-		
+
 		res.json(result);
 
 		next();
@@ -520,7 +523,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 // redirect for an old path
 router.get("/util/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 	const extendedPubkey = req.params.extendedPubkey;
-	
+
 	res.redirect(`${req.baseUrl}/xyzpub/${extendedPubkey}`);
 }));
 
@@ -529,18 +532,18 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 		const extendedPubkey = req.params.extendedPubkey;
 		res.locals.extendedPubkey = extendedPubkey;
 
-		
+
 		let limit = 20;
 		if (req.query.limit) {
 			limit = parseInt(req.query.limit);
 		}
-		
+
 		let offset = 0;
 		if (req.query.offset) {
 			offset = parseInt(req.query.offset);
 		}
 
-		
+
 		let relatedKeys = [];
 
 		let outputType = "Unknown";
@@ -577,7 +580,7 @@ router.get("/xyzpub/txids/:extendedPubkey", asyncHandler(async (req, res, next) 
 		if (req.query.limit) {
 			limit = parseInt(req.query.limit);
 		}
-		
+
 		const searchResult = await xyzpubApi.searchXpubTxids(extendedPubkey, gapLimit, limit);
 
 		let result = {
@@ -593,7 +596,7 @@ router.get("/xyzpub/txids/:extendedPubkey", asyncHandler(async (req, res, next) 
 				}
 			});
 		})
-		
+
 		if (searchResult) {
 			res.json(result);
 
@@ -630,9 +633,9 @@ router.get("/xyzpub/addresses/:extendedPubkey", asyncHandler(async (req, res, ne
 		if (req.query.offset) {
 			offset = parseInt(req.query.offset);
 		}
-		
+
 		const xyzpubResult = await xyzpubApi.getXpubAddresses(extendedPubkey, receiveOrChange, limit, offset);
-		
+
 		if (xyzpubResult){
 			res.json(xyzpubResult);
 
@@ -641,7 +644,7 @@ router.get("/xyzpub/addresses/:extendedPubkey", asyncHandler(async (req, res, ne
 		}
 
 		next();
-		
+
 	} catch (e) {
 		utils.logError("3297rwegee", e);
 
@@ -686,7 +689,7 @@ router.get("/mining/hashrate", asyncHandler(async (req, res, next) => {
 				try {
 					const hashrate = await coreApi.getNetworkHashrate(x);
 					let summary = utils.formatLargeNumber(hashrate, decimals);
-					
+
 					rates[index] = {
 						val: parseFloat(summary[0]),
 
@@ -696,7 +699,7 @@ router.get("/mining/hashrate", asyncHandler(async (req, res, next) => {
 						unitMultiplier: summary[1].val,
 
 						raw: summary[0] * summary[1].val,
-						
+
 						string1: `${summary[0]}x10^${summary[1].exponent}`,
 						string2: `${summary[0]}e${summary[1].exponent}`,
 						string3: `${(summary[0] * summary[1].val).toLocaleString()}`
@@ -740,18 +743,18 @@ router.get("/mining/diff-adj-estimate", asyncHandler(async (req, res, next) => {
 	let currentBlock;
 	let difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
 	let difficultyPeriodFirstBlockHeader;
-	
+
 	promises.push(utils.timePromise("api.diff-adj-est.getBlockHeaderByHeight", async () => {
 		currentBlock = await coreApi.getBlockHeaderByHeight(getblockchaininfo.blocks);
 	}, perfResults));
-	
+
 	promises.push(utils.timePromise("api.diff-adj-est.getBlockHeaderByHeight2", async () => {
 		let h = coinConfig.difficultyAdjustmentBlockCount * difficultyPeriod;
 		difficultyPeriodFirstBlockHeader = await coreApi.getBlockHeaderByHeight(h);
 	}, perfResults));
 
 	await utils.awaitPromises(promises);
-	
+
 	let firstBlockHeader = difficultyPeriodFirstBlockHeader;
 	let heightDiff = currentBlock.height - firstBlockHeader.height;
 	let blockCount = heightDiff + 1;
@@ -768,7 +771,7 @@ router.get("/mining/diff-adj-estimate", asyncHandler(async (req, res, next) => {
 	if (blockRatioPercent < 25) {
 		blockRatioPercent = new Decimal(25);
 	}
-	
+
 	let diffAdjPercent = 0;
 	if (predictedBlockCount > blockCount) {
 		diffAdjPercent = new Decimal(100).minus(blockRatioPercent).times(-1);
@@ -777,7 +780,7 @@ router.get("/mining/diff-adj-estimate", asyncHandler(async (req, res, next) => {
 	} else {
 		diffAdjPercent = blockRatioPercent.minus(new Decimal(100));
 	}
-	
+
 	res.send(diffAdjPercent.toFixed(2).toString());
 }));
 
@@ -908,10 +911,10 @@ router.get("/mempool/summary", function(req, res, next) {
 });
 
 router.get("/mempool/fees", asyncHandler(async (req, res, next) => {
-	let feeConfTargets = [1, 3, 6, 144];	
+	let feeConfTargets = [1, 3, 6, 144];
 	let rawSmartFeeEstimates = await coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets);
 	let smartFeeEstimates = {};
-	
+
 	for (let i = 0; i < feeConfTargets.length; i++) {
 		let rawSmartFeeEstimate = rawSmartFeeEstimates[i];
 		if (rawSmartFeeEstimate.errors) {
@@ -919,8 +922,8 @@ router.get("/mempool/fees", asyncHandler(async (req, res, next) => {
 		} else {
 			smartFeeEstimates[feeConfTargets[i]] = parseInt(new Decimal(rawSmartFeeEstimate.feerate).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(1000));
 		}
-	}		
-		
+	}
+
 	let results = {
 		"nextBlock":{"smart":smartFeeEstimates[1]},
 		"30min":smartFeeEstimates[3],
@@ -970,11 +973,11 @@ router.get("/price/sats", function(req, res, next) {
 			let one = new Decimal(1);
 			dec = one.dividedBy(dec);
 			dec = dec.times(satCurrencyType.multiplier);
-			
+
 			result[currency] = dec.toFixed(0);
 		}
 	});
-	
+
 	res.json(result);
 
 	next();
@@ -987,7 +990,7 @@ router.get("/price/marketcap", function(req, res, next) {
 		result.success = false;
 		result.error = "You have exchange-rate requests disabled (this is the default state; in your server configuration, you must set BTCEXP_NO_RATES to 'false', and ensure that BTCEXP_PRIVACY_MODE is also still its default value of 'false')"
 	}
-	
+
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo){
 		let estimatedSupply = utils.estimatedSupply(getblockchaininfo.blocks);
 		let price = 0;
@@ -1006,7 +1009,7 @@ router.get("/price/marketcap", function(req, res, next) {
 				let exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
 				price = exchangedAmt;
 			}
-		
+
 			result[currency] = estimatedSupply * price;
 		});
 
@@ -1026,7 +1029,7 @@ router.get("/price", function(req, res, next) {
 		result.success = false;
 		result.error = "You have exchange-rate requests disabled (this is the default state; in your server configuration, you must set BTCEXP_NO_RATES to 'false', and ensure that BTCEXP_PRIVACY_MODE is also still its default value of 'false')"
 	}
-	
+
 	supportedCurrencies.forEach(currency => {
 		if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
 			let formatData = utils.formatExchangedCurrency(amount, currency);
@@ -1044,8 +1047,8 @@ router.get("/price", function(req, res, next) {
 			result[currency] = utils.addThousandsSeparators(exchangedAmt);
 		}
 	});
-	
-	
+
+
 	res.json(result);
 
 	next();
@@ -1068,7 +1071,7 @@ router.get("/quotes/random", function(req, res, next) {
 
 		done = !utils.objHasProperty(quote, "duplicateIndex");
 	}
-	
+
 	res.json(quote);
 
 	next();
@@ -1086,7 +1089,7 @@ router.get("/quotes/:quoteIndex", function(req, res, next) {
 	}
 
 	let index = parseInt(req.params.quoteIndex);
-	
+
 	res.json(btcQuotes.items[index]);
 
 	next();
@@ -1129,7 +1132,7 @@ router.get("/holidays/:day", function(req, res, next) {
 	} else if (req.params.day.match(/^\d{2}-\d{2}$/)) {
 		// already correct format
 	}
-	
+
 	if (global.btcHolidays.byDay[day]) {
 		res.json({day: day, holidays: global.btcHolidays.byDay[day]});
 

@@ -2,6 +2,54 @@ extends layout
 
 block headContent
 	title Mining Summary
+	script(type="application/ld+json").
+		{
+		"@context": "https://schema.org",
+		"@type": "Dataset",
+		"name": "Bitcoin Mining Metrics Dataset",
+		"description": "This dataset provides real-time and historical insights into Bitcoin mining, including block rewards, hash rate, and difficulty adjustments.",
+		"url": "https://btcfees.org/mining-summary",
+		"keywords": ["Bitcoin", "mining", "hash rate", "difficulty", "block rewards", "block time", "mining stats"],
+		"creator": {
+		"@type": "Organization",
+		"name": "BTCfees.org",
+		"url": "https://btcfees.org"
+		},
+		"license": "https://www.gnu.org/licenses/agpl-3.0.html",
+		"distribution": {
+		"@type": "DataDownload",
+		"encodingFormat": "application/json",
+		"contentUrl": "https://btcfees.org/api/mining-summary"
+		},
+		"variableMeasured": [
+		{
+			"@type": "PropertyValue",
+			"name": "Hash Rate",
+			"description": "The computational power being used to mine Bitcoin, measured in EH/s."
+		},
+		{
+			"@type": "PropertyValue",
+			"name": "Mining Difficulty",
+			"description": "A measure of how hard it is to find a new block."
+		},
+		{
+			"@type": "PropertyValue",
+			"name": "Block Reward",
+			"description": "The current reward given to miners for solving a block, in BTC."
+		},
+		{
+			"@type": "PropertyValue",
+			"name": "Average Block Time",
+			"description": "The average time it takes to mine a new block."
+		},
+		{
+			"@type": "PropertyValue",
+			"name": "Transaction Fees (last 24h)",
+			"description": "Total transaction fees paid to miners in the last 24 hours."
+		}
+		],
+		"dateModified": "#{new Date().toISOString().split('T')[0]}"
+		}
 
 block content
 	+pageTitle("Mining Summary")
@@ -23,10 +71,10 @@ block content
 					.spinner-border.spinner-border-sm.text-primary.me-2.ms-2
 					span.fw-bold.me-2 Loading:
 					span.fw-light(id="progress-text") ...
-				
+
 				div.progress.mt-2(id="progress-bar", style="height: 7px;")
 					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
-	
+
 
 	div#summary-table
 		.row
@@ -46,16 +94,16 @@ block content
 										span.border-dotted(title="Σ (Subsidy + Fees)", data-bs-toggle="tooltip") Revenue
 									th.text-end.text-card-highlight.text-uppercase.fw-light
 										span.border-dotted(title="Percent of total subsidy plus fees", data-bs-toggle="tooltip") % Revenue
-									
+
 							tbody(id="summary-table-body")
 								tr(id="miner-summary-prototype", style="display: none;")
 									td
 										span.badge.bg-primary.miner-name
 										span.badge.bg-secondary.miner-name-unknown
-									
+
 									td.text-end
 										span.miner-block-count
-									
+
 									td.text-end
 										span.miner-subsidy-fees
 
@@ -67,26 +115,26 @@ block content
 								tr(id="miner-summary-totals", style="display: none;")
 									th.miner-name
 										| Total
-									
+
 									th.text-end
 										span.miner-block-count
-									
+
 									th.text-end
 										span.miner-subsidy-fees
 
 									th.text-end
 										| 100%
 
-		
+
 	if (false)
 		pre
 			code.json#json-content
 
 block endOfBody
-	
+
 	+graphPageScriptSetup
-	
-	
+
+
 	script.
 		var summary = null;
 		var statusId;
@@ -95,7 +143,7 @@ block endOfBody
 
 		var currentBlockHeight = !{currentBlockHeight};
 		var colors = ["#003f5c", "#2f4b7c", "#665191", "#a05195", "#d45087", "#f95d6a", "#ff7c43", "#ffa600", "#85cb39", "#00d688"];
-		
+
 		$(document).ready(function() {
 			prepareUI();
 
@@ -113,7 +161,7 @@ block endOfBody
 				}
 
 				var percent = new Decimal(res.done).dividedBy(res.count).times(100);
-				
+
 				$("#data-progress").css("width", `${percent.toDP(0)}%`);
 				$("#progress-text").html(`<span class='fw-bold d-inline-block' style='width: 55px;'>${percent.toDP(1)}%</span><span class='small fw-light ms-2'>(${res.done.toLocaleString()} of ${res.count.toLocaleString()})</span>`);
 
@@ -192,7 +240,7 @@ block endOfBody
 					blockHeightsHtml += `<li><a href='./block-height/${minerSummary.blocks[j]}'>${minerSummary.blocks[j].toLocaleString()}</a></li>`;
 				}
 				blockHeightsHtml = `<ol>${blockHeightsHtml}</ol>`
-				
+
 				if (minerName == "Unknown") {
 					row.find(".miner-name-unknown").text(minerName);
 
@@ -205,9 +253,9 @@ block endOfBody
 
 				row.find(".miner-block-count").html(`<a href='javascript:void(0);' onclick="javascipt:$('#miner-block-heights-${i}').toggle();" title="Click to show ${minerSummary.blocks.length.toLocaleString()} block height(s)" data-bs-toggle="tooltip">${minerSummary.blocks.length.toLocaleString()}</a><br/><small id='miner-block-heights-${i}' style='display: none;'>${blockHeightsHtml}</small>`);
 				row.find(".miner-block-percent").text(`(${new Decimal(minerSummary.blocks.length).dividedBy(summary.overall.blockCount).times(100).toDecimalPlaces(1)}%)`);
-				
+
 				var subsidyPlusFees = new Decimal(minerSummary.totalSubsidy).plus(new Decimal(minerSummary.totalFees));
-				
+
 				row.find(".miner-subsidy-fees").text(subsidyPlusFees);
 
 				var revenuePercent = subsidyPlusFees.dividedBy(totalSubsidyPlusFees).times(100);
@@ -227,10 +275,10 @@ block endOfBody
 
 					pieChartTotalPercent = pieChartTotalPercent.plus(revenuePercent);
 				}
-				
-				
+
+
 				updateCurrencyValue(row.find(".miner-subsidy-fees"), subsidyPlusFees);
-				
+
 
 				row.show();
 
@@ -247,7 +295,7 @@ block endOfBody
 			totalsRow.find(".miner-subsidy-fees").text(totalSubsidyPlusFees);
 
 			updateCurrencyValue(totalsRow.find(".miner-subsidy-fees"), totalSubsidyPlusFees);
-			
+
 			var parent = totalsRow.parent();
 			parent.remove(totalsRow);
 			parent.append(totalsRow);
@@ -277,10 +325,10 @@ block endOfBody
 						datasets: pieChartData.datasets,
 						labels: pieChartData.labels
 					},
-					
+
 				});
 			}
-			
+
 
 			//console.log("data: " + JSON.stringify(pieChartData.backgroundColors));
 
@@ -295,9 +343,9 @@ block endOfBody
 				$("#time-range-buttons .block-count-btn").removeClass("btn-primary").addClass("btn-outline-primary");
 				$(this).addClass("btn-primary").removeClass("btn-outline-primary");
 				$("#preconfigured-dropdown").removeClass("btn-primary").addClass("btn-outline-primary");
-				
+
 				var blockCount = parseInt($(this).attr("data-blockCount"));
-				
+
 				$(".miner-summary-row").remove();
 
 				$("#data-progress").css("width", "0%");
@@ -313,7 +361,7 @@ block endOfBody
 				// highlight current selection
 				$("#time-range-buttons .block-count-btn").removeClass("btn-primary").addClass("btn-outline-primary");
 				$("#preconfigured-dropdown").removeClass("btn-outline-primary").addClass("btn-primary");
-				
+
 				var blocks = $(this).attr("data-blocks");
 				var bStartEnd = blocks.split("-");
 				var bStart = parseInt(bStartEnd[0]);
@@ -334,7 +382,7 @@ block endOfBody
 				// highlight current selection
 				$("#time-range-buttons .block-count-btn").removeClass("btn-primary").addClass("btn-outline-primary");
 				$("#preconfigured-dropdown").removeClass("btn-primary").addClass("btn-outline-primary");
-				
+
 				var bStart = parseInt($("#custom-range-start").val());
 				var bEnd = parseInt($("#custom-range-end").val());
 

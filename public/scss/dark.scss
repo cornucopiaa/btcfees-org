@@ -1,7 +1,7 @@
 $body-bg: #1a2433;
 $body-color: #f7fafa;
 
-$main-bg: darken($body-bg, 4%);
+$main-bg: #151F45;
 
 $text-muted: #b2bac2;
 
@@ -116,8 +116,8 @@ $nav-tabs-border-color: $body-color;
 
 .alert-primary {
 	color: $body-color;
-	background-color: darken($primary, 35%);
-	border-color: darken($primary, 20%);
+	background-color: #092694;
+	border-color: #5470DA;
 	border-width: 2px;
 }
 
@@ -165,14 +165,14 @@ $nav-tabs-border-color: $body-color;
 }
 
 
-$header-footer-bg: #112138;
+$header-footer-bg: #111F55;
 
 .bg-header-footer {
 	background-color: $header-footer-bg !important;
 }
 
 .bg-header-footer-highlight {
-	background-color: lighten($header-footer-bg, 12%) !important;
+	background-color: #16335F !important;
 }
 
 .bg-gradient-body-to-main {
@@ -217,9 +217,6 @@ code {
 	color: #198754;
 }
 
-
-
-
 .bs-callout-danger {
 	background-color: #66121a;
 	border-color: #921925;
@@ -231,4 +228,18 @@ code {
 .bs-callout-info {
 	background-color: #08798f;
 	border-color: #0aa1c0;
+}
+
+.card {
+	--bs-card-bg: #1D2B60;
+	--bs-card-border-color: #2F4494;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+	background-color: #172453;
+}
+
+.table>:not(caption)>*>* {
+	background-color: #1D2B60;
+	box-shadow: none;
 }

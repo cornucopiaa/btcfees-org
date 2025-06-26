@@ -186,6 +186,8 @@ body {
 
 hr {
 	margin: 0.25rem 0 0.75rem 0 !important;
+	border-color: #2F4494;
+	opacity: 1;
 }
 
 img.header-image {
@@ -290,4 +292,111 @@ pre {
 
 .hljs-literal, .hljs-number {
 	color: #0dcaf0;
+}
+
+img.header-image-logo-icon {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	margin-right: 8px;
+}
+
+img.header-image-logo-icon-text {
+	height: 16px;
+}
+
+.header-logo-wrapper {
+	display: flex;
+	align-items: center;
+}
+
+img.header-image-logo-explorer {
+	align-self: flex-end;
+	height: 18px;
+	margin-bottom: 3px;
+	margin-left: 3px;
+}
+
+.header-wrapper {
+	display: flex;
+	justify-content: space-between;
+	gap: 10px;
+	flex-wrap: wrap;
+	flex-grow: 1;
+	margin-bottom: 10px;
+}
+
+.nav-bar-header-wrapper {
+	flex-wrap: wrap;
+}
+
+.navbar-expand-md .navbar-collapse {
+	flex: 0;
+	order: 1;
+}
+
+.search-input {
+	flex-grow: 1;
+	order: 0;
+}
+
+.navbar>.container-search-wrapper {
+	flex-wrap: nowrap;
+
+	@media (max-width: 768px) {
+		flex-wrap: wrap;
+		justify-content: flex-end;
+	}
+}
+
+.navbar-collapse-header {
+	// ...
+}
+
+.navbar-nav-header {
+	flex-direction: inherit;
+	gap: 5px;
+	margin-left: 10px;
+}
+
+.navbar-toggler-header {
+	display: none;
+}
+
+.navbar-expand-md .navbar-collapse {
+	@media (max-width: 768px) {
+		flex-grow: 0;
+		order: 1;
+		display: flex;
+	}
+}
+
+.nav-link-header {
+	@media (max-width: 768px) {
+		min-width: 100px;
+	}
+}
+
+.header-icons-wrapper {
+	display: flex;
+	gap: 4px;
+	align-items: center;
+}
+
+.header-single-icon {
+	width: 33px;
+}
+
+.title {
+	text-align: center;
+}
+
+.introduction {
+	text-align: center;
+}
+
+.promo-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }

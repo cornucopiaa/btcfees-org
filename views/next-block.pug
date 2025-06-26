@@ -2,6 +2,32 @@ extends layout
 
 block headContent
 	title Next Block
+	script(type="application/ld+json").
+		{
+		"@context": "https://schema.org",
+		"@type": "BlockchainBlock",
+		"name": "Predicted Next Bitcoin Block",
+		"url": "https://btcfees.org/next-block",
+		"blockchain": "Bitcoin",
+		"height": #{blockTemplate.height},
+		"description": "This is a predicted Bitcoin block based on current mempool data. It includes estimated transactions, total fees, and expected confirmation time.",
+		"expectedArrivalFrom": "#{new Date(Date.now() + 600000).toISOString()}",
+		"transactionCount": #{blockTemplate.transactions.length},
+		"isBasedOn": {
+			"@type": "Dataset",
+			"name": "Bitcoin Mempool Data",
+			"url": "https://btcfees.org/mempool",
+			"description": "Live transaction data awaiting confirmation in the Bitcoin network."
+		},
+		"isPartOfBlockchain": {
+			"@type": "Blockchain",
+			"name": "Bitcoin"
+		},
+		"mainEntityOfPage": {
+			"@type": "WebPage",
+			"@id": "https://btcfees.org/next-block"
+		}
+		}
 
 block content
 	+pageTitle("Next Block")
@@ -24,14 +50,14 @@ block content
 						if (maxFeeRate != -1)
 							span.border-dotted(title="Minimum fee rate", data-bs-toggle="tooltip")
 								+numWithMutedDecimals(new Decimal(minFeeRate).toDP(2).toString())
-							
+
 							span.text-muted.fw-light.mx-2 /
-							
+
 							span.border-dotted(title="Median fee rate", data-bs-toggle="tooltip")
 								+numWithMutedDecimals(new Decimal(medianFeeRate).toDP(2).toString())
-							
+
 							span.text-muted.fw-light.mx-2 /
-							
+
 							span.border-dotted(title="Maximum fee rate", data-bs-toggle="tooltip")
 								+numWithMutedDecimals(new Decimal(maxFeeRate).toDP(1).toString())
 
@@ -79,7 +105,7 @@ block content
 													span.border-dotted(title="Effective fee rate, including ancestor transactions", data-bs-toggle="tooltip")
 														span.text-muted #{new Decimal(tx.avgFeeRate).toDP(2)}
 													| )
-											
+
 
 										td.text-end
 											+valueDisplay(new Decimal(tx.fee).dividedBy(coinConfig.baseCurrencyUnit.multiplier))

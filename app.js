@@ -134,7 +134,7 @@ const statTracker = require("./app/statTracker.js");
 
 const statsProcessFunction = (name, stats) => {
 	appStats.trackAppStats(name, stats);
-	
+
 	if (process.env.STATS_API_URL) {
 		const data = Object.assign({}, stats);
 		data.name = name;
@@ -154,7 +154,7 @@ const processStatsInterval = setInterval(() => {
 		statsProcessFunction);
 
 }, process.env.STATS_PROCESS_INTERVAL || (5 * 60 * 1000));
-	
+
 // Don't keep Node.js process up
 processStatsInterval.unref();
 
@@ -320,8 +320,7 @@ const cdnItems = [
 	[`img/network-mainnet/logo.svg`, `image/svg+xml`, "utf8"],
 	[`img/network-mainnet/coin-icon.svg`, `image/svg+xml`, "utf8"],
 	[`img/network-mainnet/apple-touch-icon.png`, `image/png`, "binary"],
-	[`img/network-mainnet/favicon-16x16.png`, `image/png`, "binary"],
-	[`img/network-mainnet/favicon-32x32.png`, `image/png`, "binary"],
+	[`img/network-mainnet/favicon-96x96.png`, `image/png`, "binary"],
 	[`img/network-testnet/logo.svg`, `image/svg+xml`, "utf8"],
 	[`img/network-testnet/coin-icon.svg`, `image/svg+xml`, "utf8"],
 	[`img/network-signet/logo.svg`, `image/svg+xml`, "utf8"],
@@ -407,7 +406,7 @@ async function getSourcecodeProjectMetadata() {
 
 function loadChangelog() {
 	var filename = "CHANGELOG.md";
-	
+
 	fs.readFile(path.join(__dirname, filename), 'utf8', function(err, data) {
 		if (err) {
 			utils.logError("2379gsd7sgd334", err);
@@ -419,7 +418,7 @@ function loadChangelog() {
 
 
 	var filename = "CHANGELOG-API.md";
-	
+
 	fs.readFile(path.join(__dirname, filename), 'utf8', function(err, data) {
 		if (err) {
 			utils.logError("ouqhuwey723", err);
@@ -553,10 +552,10 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 
 		debugErrorLog(`Unable to parse node version string: ${getnetworkinfo.subversion} - RPC versioning will likely be unreliable. Is your node a version of Bitcoin Core?`);
 	}
-	
+
 	debugLog(`RPC Connected: version=${getnetworkinfo.version} subversion=${getnetworkinfo.subversion}, parsedVersion(used for RPC versioning)=${global.btcNodeSemver}, protocolversion=${getnetworkinfo.protocolversion}, chain=${getblockchaininfo.chain}, services=${services}`);
 
-	
+
 	// load historical/fun items for this chain
 	loadHistoricalDataForChain(global.activeBlockchain);
 
@@ -643,10 +642,10 @@ async function loadDifficultyHistory(tipBlockHeight=null) {
 	}
 
 	global.difficultyHistory = await coreApi.getDifficultyByBlockHeights(heights);
-	
+
 	global.athDifficulty = 0;
 	for (let i = 0; i < heights.length; i++) {
-		if (global.difficultyHistory[`${heights[i]}`].difficulty > global.athDifficulty) {	
+		if (global.difficultyHistory[`${heights[i]}`].difficulty > global.athDifficulty) {
 			global.athDifficulty = global.difficultyHistory[heights[i]].difficulty;
 		}
 	}
@@ -669,7 +668,7 @@ async function assessTxindexAvailability() {
 
 		if (global.getindexinfo.txindex) {
 			// getindexinfo was available, and txindex is also available...easy street
-			
+
 			global.txindexAvailable = true;
 
 			debugLog("txindex check: available!");
@@ -812,7 +811,7 @@ function refreshNetworkVolumes() {
 
 expressApp.onStartup = async () => {
 	global.appStartTime = new Date().getTime();
-	
+
 	global.config = config;
 	global.coinConfig = coins[config.coin];
 	global.coinConfigs = coins;
@@ -846,7 +845,7 @@ expressApp.onStartup = async () => {
 			setTimeout(callback, 5000);
 		})();
 	}
-	
+
 
 	if (global.sourcecodeVersion == null && fs.existsSync('.git')) {
 		try {
@@ -870,7 +869,7 @@ expressApp.onStartup = async () => {
 
 			debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (code: unknown commit) at http://${config.host}:${config.port}${config.baseUrl}`);
 		}
-		
+
 		expressApp.continueStartup();
 
 	} else {
@@ -895,7 +894,7 @@ expressApp.onStartup = async () => {
 			try {
 				let absoluteFilepath = path.join(process.cwd(), "public", filepath);
 				let s3path = s3Path(filepath);
-				
+
 				const existingAsset = await cdnS3Bucket.get(s3path);
 
 				if (existingAsset) {
@@ -1026,7 +1025,7 @@ expressApp.continueStartup = function() {
 			if (config.electrumServers && config.electrumServers.length > 0) {
 				electrumAddressApi.connectToServers().then(function() {
 					global.electrumAddressApi = electrumAddressApi;
-					
+
 				}).catch(function(err) {
 					utils.logError("31207ugf4e0fed", err, {electrumServers:config.electrumServers});
 				});
@@ -1082,7 +1081,7 @@ expressApp.use(function(req, res, next) {
 	res.locals.utxoSetSummary = global.utxoSetSummary;
 	res.locals.utxoSetSummaryPending = global.utxoSetSummaryPending;
 	res.locals.networkVolume = global.networkVolume;
-	
+
 	res.locals.host = req.session.host;
 	res.locals.port = req.session.port;
 
@@ -1128,10 +1127,10 @@ expressApp.use(function(req, res, next) {
 
 	if (req.session.userMessage) {
 		res.locals.userMessage = req.session.userMessage;
-		
+
 		if (req.session.userMessageType) {
 			res.locals.userMessageType = req.session.userMessageType;
-			
+
 		} else {
 			res.locals.userMessageType = "warning";
 		}
@@ -1155,7 +1154,7 @@ expressApp.use(function(req, res, next) {
 
 		return;
 	}
-	
+
 
 	// make some var available to all request
 	// ex: req.cheeseStr = "cheese";
@@ -1217,7 +1216,7 @@ const sharedErrorHandler = (req, err) => {
 		const path = err.toString().substring(err.toString().lastIndexOf(" ") + 1);
 		const userAgent = req.headers['user-agent'];
 		const crawler = utils.getCrawlerFromUserAgentString(userAgent);
-		const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress; 
+		const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
 		const attributes = { path:path };
 
