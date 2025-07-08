@@ -22,7 +22,7 @@ html(lang="en")
 
 		meta(property="og:title" content=(metaTitle != undefined ? metaTitle : "BTCfees.org: Real-Time Bitcoin Fee and Blockchain Insights."))
 		meta(property="og:description" content=(metaDesc != undefined ? metaDesc : "BTCfees.org provides real-time insights into Bitcoin network activity, including transaction fees, mempool dynamics, and blockchain data. Explore tools and analytics designed to help users navigate Bitcoin's blockchain effectively."))
-		meta(property="og:image" content="https://btcfees.org.org/img/preview.png")
+		meta(property="og:image" content="https://btcfees.org/img/preview.png")
 
 		meta(property="twitter:card" content="summary_large_image")
 		meta(property="twitter:title" content=(metaTitle != undefined ? metaTitle : "BTCfees.org: Real-Time Bitcoin Fee and Blockchain Insights."))
@@ -38,8 +38,6 @@ html(lang="en")
 		link(rel="icon", type="image/png", sizes="32x32", href=assetUrl(`./img/network-${network}/favicon-96x96.png`))
 		link(rel="manifest", href=`./img/network-${network}/site.webmanifest`)
 		link(rel="shortcut icon", href=assetUrl(`./img/network-${network}/favicon.ico`))
-		meta(name="apple-mobile-web-app-title", content="BTC Explorer")
-		meta(name="application-name", content="BTC Explorer")
 		meta(name="theme-color" content="#022e70")
 
 		include includes/debug-overrides.pug

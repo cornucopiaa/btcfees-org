@@ -1130,8 +1130,8 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 				res.locals.metaDesc = "";
 			}
 		} else {
-			res.locals.metaTitle = `Bitcoin Block #${blockHeight.toLocaleString()}`;
-			res.locals.metaDesc = "";
+			res.locals.metaTitle = `Bitcoin Block #${blockHeight} - Transactions and Fees | BTCfees.org`;;
+			res.locals.metaDesc = `Details for Bitcoin block #${blockHeight}, including transaction count, fees, size, and miner details.`;;
 		}
 
 

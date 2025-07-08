@@ -57,7 +57,7 @@ function copyTextToClipboard(text) {
 		// remove element
 		input.remove();
 	}
-	
+
 }
 
 function enableTooltipsAndPopovers() {
@@ -87,7 +87,7 @@ function activateTheme(themeName) {
 
 	$(`#${themeName}-theme-link-tag`).attr("rel", "stylesheet");
 	$(`#theme-toggler-${themeName}`).addClass(activeClass).removeClass(inactiveClass);
-	
+
 
 	$.get(`./changeSetting?name=uiTheme&value=${themeName}`, function(data) {
 		console.log("Theme updated.");
@@ -117,7 +117,7 @@ function ellipsizeMiddle(str, length, replacement="…", extraCharAtStart=true) 
 			} else {
 				return str.substring(0, Math.floor((length - replacement.length) / 2)) + replacement + str.slice(-Math.ceil((length - replacement.length) / 2));
 			}
-			
+
 		}
 	}
 }
@@ -131,7 +131,7 @@ function onLoad_tabSelection() {
 			var newUrl;
 			const hash = selectableTab.getAttribute('href');
 			const isDefault = selectableTab.getAttribute("data-default-tab");
-			
+
 			if (isDefault) {
 				newUrl = url.split('#')[0];
 
@@ -148,7 +148,7 @@ function onLoad_tabSelection() {
 		const hash = url.split('#');
 		const currentTab = document.querySelector('#page-tabs .page-tab a[href="#' + hash[1] + '"]');
 		bootstrap.Tab.getInstance(currentTab).show();
-		
+
 		url = location.href.replace(/\/#/, '#');
 		history.replaceState(null, null, url);
 
