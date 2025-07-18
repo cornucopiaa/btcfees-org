@@ -12,12 +12,12 @@ module.exports =
     "sentry.min.js": "sha384-da/Bo2Ah6Uw3mlhl6VINMblg2SyGbSnULKrukse3P5D9PTJi4np9HoKvR19D7zOL",
     "site.js": "sha384-RzgTcMocxfmO/wrrC+Fv2+OMIlXDujF0Z/5iQlFEKWGIsKRq60gOCztyJb4kPV17",
     "bootstrap-icons.css": "sha384-rJFhkIguED0Z4GX6r6ReHpTCkwWtiPHZnQtWVP0DQWcKHzeJAlYb1m/xdYkeEk+f",
-    "dark-v1.min.css": "sha384-sg1l5F6O5IU6mZCpJyPK2jBkr6lJVqIwAMX0YXc2ckwgD26wvMmVxddrNzcXsquB",
-    "dark.css": "sha384-qReBYSW+Xj4QmvJT3pm7Qh++3lqy1kCA1WI82VHbI27t3cXS6YkQezft9U2GQVqj",
-    "dark.min.css": "sha384-FTqP7PuRGIBzeSjEYew3G4Fk8Wziyo0zfLS3w+u1lhLFkR9TmrmNHK7bR7UZDnIg",
+    "dark-v1.min.css": "sha384-Js8RbfV5C1mGfbz8j23GkwQ3uGXM2YbqoBYyk2vbt18tMS52yXXLXJK4KaA1sOhD",
+    "dark.css": "sha384-zLNQVoReAHlGgaCZjO55tnLDKC5KWxzoaYM38GRHVr28xesYqRL0oO+p9wP5ygWT",
+    "dark.min.css": "sha384-5tpY6Mp5BaFJBWHQ/WxFKMsUEF28pkzGhRexu8eeYOde4ed8PiqlIIef/3lK6lxa",
     "dataTables.bootstrap4.min.css": "sha384-EkHEUZ6lErauT712zSr0DZ2uuCmi3DoQj6ecNdHQXpMpFNGAQ48WjfXCE5n20W+R",
     "highlight.min.css": "sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ",
-    "light.min.css": "sha384-KXV8bxR/sZHXxEVY5v2vrtLLkQ5czyxdgnaYaJ4FjFodyzbjYNT16+DzCNIxft/k",
+    "light.min.css": "sha384-w69dg4gUyu2b9mm7DrAiiRHiv1m9P7bXdIkZXNZ4+bBwaDG/+LGdZPgUFQQpn7iv",
     "leaflet.css": "sha384-6wKUKNzA6h/S6gZ1lWQppeGaVXvK1AUAsEznGBghzlEu1fNcxJGYVRiroSHr+OwU",
     "leaflet.js": "sha384-RFZC58YeKApoNsIbBxf4z6JJXmh+geBSgkCQXFyh+4tiFSJmJBt+2FbjxW7Ar16M"
 };
