@@ -10,73 +10,77 @@ html(lang="en")
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
 
 		meta(name="description" content="Open-source, easy-to-use, educational Bitcoin explorer whose only dependency is your Bitcoin Core node.")
-		
+
 		if (!homepage)
 			link(rel="stylesheet", href=assetUrl(`./style/highlight.min.css`), integrity=assetIntegrity("highlight.min.css"), crossorigin="anonymous")
 
 
 		+themeCss
-		
 
-		link(id="canonical" rel="canonical" href="https://bitcoinexplorer.org")
 
-		meta(property="og:title" content=(metaTitle != undefined ? metaTitle : "BitcoinExplorer.org - Open-Source Bitcoin Explorer"))
-		meta(property="og:description" content=(metaDesc != undefined ? metaDesc : "Open-source, easy-to-use, educational Bitcoin explorer whose only dependency is your Bitcoin Core node."))
-		meta(property="og:image" content="https://bitcoinexplorer.org/img/preview.png")
+		link(id="canonical" rel="canonical" href=(canonicalPart != undefined ? `https://btcfees.org/${canonicalPart}` : "https://btcfees.org"))
+
+		meta(property="og:title" content=(metaTitle != undefined ? metaTitle : "Real-Time Bitcoin Fee and Blockchain Insights | BTCfees.org"))
+		meta(property="og:description" content=(metaDesc != undefined ? metaDesc : "BTCfees.org provides real-time insights into Bitcoin network activity, including transaction fees, mempool dynamics, and blockchain data."))
+		meta(property="og:image" content="https://btcfees.org/img/preview.png")
 
 		meta(property="twitter:card" content="summary_large_image")
-		meta(property="twitter:site" content="@BitcoinExplorer")
-		meta(property="twitter:creator" content="@BitcoinExplorer")
-		meta(property="twitter:title" content=(metaTitle != undefined ? metaTitle : "BitcoinExplorer.org"))
-		meta(property="twitter:description" content=(metaDesc != undefined ? metaDesc : "Open-source, easy-to-use, educational Bitcoin explorer whose only dependency is your Bitcoin Core node."))
-		meta(property="twitter:image:src" content=(metaImgUrl != undefined ? metaImgUrl : "https://bitcoinexplorer.org/img/preview.png"))
-		meta(property="twitter:domain" content="bitcoinexplorer.org")
+		meta(property="twitter:title" content=(metaTitle != undefined ? metaTitle : "Real-Time Bitcoin Fee and Blockchain Insights | BTCfees.org"))
+		meta(property="twitter:description" content=(metaDesc != undefined ? metaDesc : "BTCfees.org provides real-time insights into Bitcoin network activity, including transaction fees, mempool dynamics, and blockchain data."))
+		meta(property="twitter:image:src" content=(metaImgUrl != undefined ? metaImgUrl : "https://btcfees.org/img/preview.png"))
+		meta(property="twitter:domain" content="btcfees.org")
 
 		- var network = global.activeBlockchain || "main";
 		if (!network.endsWith("net") && network != "regtest")
 			- network = (network + "net"); // handles "main" -> "mainnet" and "test" -> "testnet"
 
 		link(rel="apple-touch-icon", sizes="180x180", href=assetUrl(`./img/network-${network}/apple-touch-icon.png`))
-		link(rel="icon", type="image/png", sizes="32x32", href=assetUrl(`./img/network-${network}/favicon-32x32.png`))
-		link(rel="icon", type="image/png", sizes="16x16", href=assetUrl(`./img/network-${network}/favicon-16x16.png`))
+		link(rel="icon", type="image/png", sizes="32x32", href=assetUrl(`./img/network-${network}/favicon-96x96.png`))
 		link(rel="manifest", href=`./img/network-${network}/site.webmanifest`)
-		link(rel="mask-icon", href=`./img/network-${network}/safari-pinned-tab.svg`, color="#f7931a")
 		link(rel="shortcut icon", href=assetUrl(`./img/network-${network}/favicon.ico`))
-		meta(name="apple-mobile-web-app-title", content="BTC Explorer")
-		meta(name="application-name", content="BTC Explorer")
-		meta(name="msapplication-TileColor", content="#022e70")
-		meta(name="msapplication-config", content=`./img/network-${network}/browserconfig.xml`)
 		meta(name="theme-color" content="#022e70")
 
 		include includes/debug-overrides.pug
 
+		title= (metaTitle != undefined ? metaTitle : "Real-Time Bitcoin Fee and Blockchain Insights | BTCfees.org")
+		meta(name="description" content=(metaDesc != undefined ? metaDesc : "BTCfees.org provides real-time insights into Bitcoin network activity, including transaction fees, mempool dynamics, and blockchain data."))
+
 		block headContent
-			title Explorer
 
 	body.bg-header-footer
-		nav.navbar.navbar-expand-md.navbar-dark.bg-header-footer
+		nav.navbar.navbar-expand-md.navbar-dark.bg-header-footer.nav-bar-header-wrapper
 			.container
-				a.navbar-brand(href="./")
-					span
-						if (coinConfig.logoUrlsByNetwork && coinConfig.logoUrlsByNetwork[activeBlockchain])
-							img.header-image(src=assetUrl(coinConfig.logoUrlsByNetwork[activeBlockchain]), alt="logo")
-						else
-							img.header-image(src=assetUrl("./img/network-mainnet/logo.svg"), alt="logo")
-
-						if (coinConfig.siteTitlesByNetwork && coinConfig.siteTitlesByNetwork[activeBlockchain])
-							span.fw-light #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
-						else
-							span.fw-light Bitcoin Explorer
-
+				div.header-wrapper
+					a.navbar-brand(href="./")
+						span.header-logo-wrapper
+							img.header-image-logo-icon(src=assetUrl("./img/base-images/icon-btc.svg"), alt="logo")
+							img.header-image-logo-icon-text(src=assetUrl("./img/base-images/btc-fees-icon.svg"))
+							img.header-image-logo-explorer(src=assetUrl("./img/base-images/icon-explorer.svg"))
+					div.header-icons-wrapper
+						a(href="https://btcscan.org/")
+							img.header-single-icon(src=assetUrl("./img/base-images/btc-icon.svg"))
+						a(href="https://ethscan.org/")
+							img.header-single-icon(src=assetUrl("./img/base-images/eth-icon.svg"))
+						a(href="https://xmrscan.org/")
+							img.header-single-icon(src=assetUrl("./img/base-images/xmr-icon.svg"))
+						a(href="https://moneroexplorer.org/")
+							img.header-single-icon(src=assetUrl("./img/base-images/monero-icon.svg"))
+						a(href="https://btcmempool.org/")
+							img.header-single-icon(src=assetUrl("./img/base-images/mempool-icon.svg"))
+						a(href="https://btcfee.org/")
+							img.header-single-icon(src=assetUrl("./img/base-images/btc-fee-icon.svg"))
+						a(href="https://btcfees.org/")
+							img.header-single-icon(src=assetUrl("./img/base-images/btc-fees-icon-action.svg"))
+			.container.container-search-wrapper
 				if (false && config.demoSite)
 					- var networkNameMap = {"main": "Mainnet", "test": "Testnet", "signet": "Signet"};
 					span.badge.bg-primary(title=`This is a public demo, but this tool is designed to be installed and run by all Bitcoiners...<br/><i>Don't Trust, Verify</i>!`, data-bs-toggle="tooltip", data-bs-html="true")
 						span Public Demo
-						
-				button.navbar-toggler.navbar-toggler-end(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-label="collapse navigation")
+
+				button.navbar-toggler.navbar-toggler-end.navbar-toggler-header(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-label="collapse navigation")
 					span.navbar-toggler-icon
-					
-				.collapse.navbar-collapse(id="navbarNav")
+
+				.navbar-collapse.navbar-collapse-header(id="navbarNav")
 					if (rpcClient)
 						ul.navbar-nav.me-auto
 							if (false)
@@ -90,10 +94,10 @@ html(lang="en")
 								li.nav-item
 									span.badge.bg-primary(style="margin-top: 0.75rem;", title=`Current node's chain: ${activeBlockchain}` data-bs-toggle="tooltip") #{chainName}
 
-							
-							
-						
-						ul.navbar-nav
+
+
+
+						ul.navbar-nav.navbar-nav-header
 							if (config.demoSite && homepage)
 								li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
 									a.nav-link.dropdown-toggle.bg-header-footer-highlight.rounded(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
@@ -103,22 +107,44 @@ html(lang="en")
 										span.dropdown-header Public Demo Sites
 
 										- var demoSites = ["main", "test", "signet"];
-										
+
 										each demoSite in demoSites
 											a.dropdown-item(href=coinConfig.demoSiteUrlsByNetwork[demoSite])
 												img.align-text-top.me-2(src=assetUrl(coinConfig.coinIconUrlsByNetwork[demoSite]), style="width: 20px;")
-												
+
 												| #{coinConfig.siteTitlesByNetwork[demoSite].replace("Explorer", "").replace("Bitcoin", "Mainnet")}
 
 							if (config.siteTools)
 								li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
-									a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+									a.nav-link-header.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 										i.bi-tools.me-2.ms-1
 
 									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Tools Items")
+										span.dropdown-header Explorers
+										a.dropdown-item(href="https://btcscan.org/")
+											img.header-single-icon(src=assetUrl("./img/base-images/btc-icon.svg") style="width: 20px; margin-right: 10px;")
+											span BTC Explorer
+										a.dropdown-item(href="https://ethscan.org/")
+											img.header-single-icon(src=assetUrl("./img/base-images/eth-icon.svg") style="width: 20px; margin-right: 10px;")
+											span ETH Explorer
+										a.dropdown-item(href="https://xmrscan.org/")
+											img.header-single-icon(src=assetUrl("./img/base-images/xmr-icon.svg") style="width: 20px; margin-right: 10px;")
+											span XMR Explorer
+										a.dropdown-item(href="https://moneroexplorer.org/")
+											img.header-single-icon(src=assetUrl("./img/base-images/monero-icon.svg") style="width: 20px; margin-right: 10px;")
+											span Monero Explorer
+										a.dropdown-item(href="https://btcmempool.org/")
+											img.header-single-icon(src=assetUrl("./img/base-images/mempool-icon.svg") style="width: 20px; margin-right: 10px;")
+											span BTC Mempool
+										a.dropdown-item(href="https://btcfee.org/")
+											img.header-single-icon(src=assetUrl("./img/base-images/btc-fee-icon.svg") style="width: 20px; margin-right: 10px;")
+											span BTC Fee
+										a.dropdown-item(href="https://btcfees.org/")
+											img.header-single-icon(src=assetUrl("./img/base-images/btc-fees-icon-action.svg") style="width: 20px; margin-right: 10px;")
+											span BTC Fees
+
 										each section, sectionIndex in config.site.toolSections
-											if (sectionIndex > 0)
-												hr.dropdown-divider.mt-2.mb-1
+											hr.dropdown-divider.mt-2.mb-1
 
 											span.dropdown-header #{section.name}
 
@@ -130,9 +156,9 @@ html(lang="en")
 													span  #{item.name}
 
 							li.nav-item.dropdown.me-0.me-md-3.mt-2.mt-md-0.text-center.text-md-start
-								a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+								a.nav-link-header.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 									i.bi-gear.me-2.ms-1
-								
+
 								.dropdown-menu.dropdown-menu-end.shadow(aria-labelledby="navbarDropdown")
 									span.dropdown-header Display Currency
 
@@ -172,8 +198,8 @@ html(lang="en")
 										- items.push("local");
 
 									.btn-group.ms-3
-										- let themeNames = ["light", "dark", "dark-v1"];
-										- let themeIcons = ["bi-sun-fill", "bi-moon-fill", "bi-moon"];
+										- let themeNames = ["light", "dark"];
+										- let themeIcons = ["bi-sun-fill", "bi-moon-fill"];
 										- let themeIconColors = ["text-warning", "", ""];
 
 										each themeName, themeIndex in themeNames
@@ -202,13 +228,13 @@ html(lang="en")
 									a.dropdown-item(href=`./admin/dashboard`) Admin Dashboard
 
 
-							
 
-				form.form-inline.d-none.d-lg-inline(method="post", action="./search", style="width: 325px;")
+
+				form.form-inline.d-none.d-lg-inline.search-input(method="post", action="./search")
 					input(type="hidden", name="_csrf", value=csrfToken)
 					.input-group
 						input.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query), autocapitalize="off", autocomplete="off", autocorrect="off", spellcheck="false")
-						
+
 						button.btn.btn-primary(type="submit", aria-label="Search")
 							i.bi-search
 
@@ -216,10 +242,10 @@ html(lang="en")
 					input(type="hidden", name="_csrf", value=csrfToken)
 					.input-group
 						input.form-control(type="text", name="query", placeholder="height/hash/txid...", value=(query), autocapitalize="off", autocomplete="off", autocorrect="off", spellcheck="false")
-						
+
 						button.btn.btn-primary(type="submit", aria-label="Search")
 							i.bi-search
-		
+
 
 
 		div.pb-4.pt-3.pt-md-4.bg-main
@@ -229,7 +255,7 @@ html(lang="en")
 
 					div.alert.alert-danger
 						- var errorText = `This page encountered ${pageErrors.length.toLocaleString()} error${pageErrors.length == 1 ? "" : "s"}:`;
-						span.fw-bold #{errorText} 
+						span.fw-bold #{errorText}
 						a(href="javascript:void(0)", data-bs-toggle="modal", data-bs-target="#pageErrorsModal") Error details
 
 				if (userMessageMarkdown)
@@ -246,100 +272,60 @@ html(lang="en")
 
 				div(style="margin-bottom: 30px;")
 
-		footer.footer.border-top.border-primary.bg-header-footer.pt-3.pb-1.px-3.text-white(style="border-width: 5px !important;")
-			.container
-				if (!crawlerBot && global.rpcConnected)
-					.mb-4.mx-6
-						iframe(id="quoteIframe", title="A Bitcoin Quote of the Day", src="./snippet/quote/random", onload="iframeLoaded('quoteIframe');", scrolling="no", height="0", style="width: 100%;")
+		//footer.footer.border-top.border-primary.bg-header-footer.pt-3.pb-1.px-3.text-white(style="border-width: 5px !important;")
+		//	.container
+		//		.row.mt-4.mb-6
+		//			.col-lg-3
+		//				.mb-4
+		//					h6 Project
+		//
+		//					.ms-2
+		//						a.footer-link(href="https://github.com/janoside/btc-rpc-explorer") github.com/janoside/btc-rpc-explorer
+		//
+		//						if (global.sourcecodeProjectMetadata)
+		//							div.mt-2
+		//								a.btn.btn-primary.btn-sm.me-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer")
+		//									i.bi-star-fill.text-warning.me-2
+		//									span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.stargazers_count}
+		//
+		//								a.btn.btn-primary.btn-sm.me-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer/fork")
+		//									i.bi-bezier2.me-2
+		//									span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.forks_count}
+		//
+		//			.col-lg-3
+		//				if (config.demoSite)
+		//					.mb-4
+		//						h6 Public Demos
+		//
+		//						.ms-2
+		//							if (coinConfig.demoSiteUrlsByNetwork && coinConfig.demoSiteUrlsByNetwork.main)
+		//								a.footer-link(href=coinConfig.demoSiteUrlsByNetwork.main) #{coinConfig.demoSiteUrlsByNetwork.main}
+		//							else
+		//								a.footer-link(href="https://btcfees.org") https://btcfees.org
+		//
+		//							br
+		//
+		//							a.footer-link(href="http://btcexpz7xlwrqknqw6p3bok6shf73qtkd6zxct4x4qta2ktvh7ntprad.onion", title="Tor v3 Hidden Service", data-bs-toggle="tooltip") btcexp….onion
+		//							span.ms-1 (tor v3)
+		//							+copyTextButton("http://btcexpz7xlwrqknqw6p3bok6shf73qtkd6zxct4x4qta2ktvh7ntprad.onion")
+		//
+		//							div.mt-2
+		//								- var demoSites = ["main", "test", "signet"];
+		//
+		//								each demoSite in demoSites
+		//									a.me-2(href=coinConfig.demoSiteUrlsByNetwork[demoSite], title=coinConfig.siteTitlesByNetwork[demoSite], data-bs-toggle="tooltip")
+		//										img(src=assetUrl(coinConfig.logoUrlsByNetwork[demoSite]), alt=coinConfig.siteTitlesByNetwork[demoSite], style="width: 40px; height: 40px;")
 
-					hr
 
-				
-				.row.mt-4.mb-6
-					.col-lg-3
-						.mb-4
-							h6 Project
-
-							.ms-2
-								a.footer-link(href="https://github.com/janoside/btc-rpc-explorer") github.com/janoside/btc-rpc-explorer
-									
-								if (global.sourcecodeProjectMetadata)
-									div.mt-2
-										a.btn.btn-primary.btn-sm.me-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer")
-											i.bi-star-fill.text-warning.me-2
-											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.stargazers_count}
-
-										a.btn.btn-primary.btn-sm.me-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer/fork")
-											i.bi-bezier2.me-2
-											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.forks_count}
-
-					.col-lg-3
-						.mb-4
-							h6 App Details
-
-							.ms-2
-								span version: #{global.appVersion}
-								if (sourcecodeVersion)
-									br
-									span commit: 
-										a.footer-link(href=`https://github.com/janoside/btc-rpc-explorer/commit/${sourcecodeVersion}`) #{sourcecodeVersion}
-								
-								br
-								span released: #{sourcecodeDate}
-								span(style="font-size: 0.9em;")  (
-									a.footer-link(href="./changelog") changelog
-									span )
-
-					.col-lg-3
-						if (config.demoSite)
-							.mb-4
-								h6 Public Demos
-
-								.ms-2
-									if (coinConfig.demoSiteUrlsByNetwork && coinConfig.demoSiteUrlsByNetwork.main)
-										a.footer-link(href=coinConfig.demoSiteUrlsByNetwork.main) #{coinConfig.demoSiteUrlsByNetwork.main}
-									else
-										a.footer-link(href="https://bitcoinexplorer.org") https://bitcoinexplorer.org
-
-									br
-
-									a.footer-link(href="http://btcexpz7xlwrqknqw6p3bok6shf73qtkd6zxct4x4qta2ktvh7ntprad.onion", title="Tor v3 Hidden Service", data-bs-toggle="tooltip") btcexp….onion
-									span.ms-1 (tor v3)
-									+copyTextButton("http://btcexpz7xlwrqknqw6p3bok6shf73qtkd6zxct4x4qta2ktvh7ntprad.onion")
-									
-									div.mt-2
-										- var demoSites = ["main", "test", "signet"];
-										
-										each demoSite in demoSites
-											a.me-2(href=coinConfig.demoSiteUrlsByNetwork[demoSite], title=coinConfig.siteTitlesByNetwork[demoSite], data-bs-toggle="tooltip")
-												img(src=assetUrl(coinConfig.logoUrlsByNetwork[demoSite]), alt=coinConfig.siteTitlesByNetwork[demoSite], style="width: 40px; height: 40px;")
-
-					.col-lg-3
-						.mb-4
-							h6 Links
-
-							.ms-2
-								span(style="font-size: 1.5rem;")
-									if (global.sourcecodeProjectMetadata)
-										a.text-white.mb-1.me-3(href="https://github.com/janoside/btc-rpc-explorer", title="View source code", data-bs-toggle="tooltip")
-											i.bi-git
-
-									a.text-danger.mb-1.me-3(href="https://donate.bitcoinexplorer.org", target="_blank", title="Support this project with a donation", data-bs-toggle="tooltip")
-										i.bi-heart-fill.text-danger
-
-									a.text-white.mb-1(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow @BitcoinExplorer on Twitter", data-bs-toggle="tooltip")
-										i.bi-twitter.text-twitter
-								
-								
 
 		+sharedScriptTags
-		
+
 		script.
 			var serverTzOffset = "!{new Decimal(new Date().getTimezoneOffset()).dividedBy(60)}";
 			var browserTzOffset = "!{browserTzOffset}";
 			var currentBrowserTzOffset = (new Date().getTimezoneOffset() / 60).toString();
 			var userTzOffset = "!{userTzOffset}";
-			
+
 			document.addEventListener("DOMContentLoaded", function(event) {''
 				enableTooltipsAndPopovers();
 
@@ -366,7 +352,7 @@ html(lang="en")
 								if (formatStr) {
 									formatStr = `&formatString=${formatStr}`;
 								}
-								
+
 								$.get(`./snippet/timestamp?timestamp=${timestampUtc}&includeAgo=${includeAgo}${formatStr}`, function(data) {
 									$(obj).html(data);
 
@@ -394,7 +380,7 @@ html(lang="en")
 		if (process.env.BTCEXP_PLAUSIBLE_ANALYTICS_DOMAIN && process.env.BTCEXP_PLAUSIBLE_ANALYTICS_SCRIPT_URL)
 			script(async defer data-domain=process.env.BTCEXP_PLAUSIBLE_ANALYTICS_DOMAIN src=process.env.BTCEXP_PLAUSIBLE_ANALYTICS_SCRIPT_URL)
 
-			
+
 
 		if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
 			script(src=assetUrl("./js/sentry.min.js"), integrity=assetIntegrity("sentry.min.js"), crossorigin="anonymous")
@@ -410,5 +396,5 @@ html(lang="en")
 
 				gtag('config', '#{config.credentials.googleAnalyticsTrackingId}');
 
-		
+
 		block endOfBody

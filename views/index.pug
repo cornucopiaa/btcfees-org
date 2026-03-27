@@ -1,8 +1,51 @@
 extends layout
 
 block headContent
-	title Bitcoin Explorer
-	
+	script(type="application/ld+json").
+		{
+			"@context": "https://schema.org",
+			"@type": "WebPage",
+			"url": "https://btcfees.org",
+			"name": "BTCfees.org: Real-Time Bitcoin Fee and Blockchain Insights",
+			"description": "BTCfees.org provides real-time insights into Bitcoin network activity, including transaction fees, mempool dynamics, and blockchain data.",
+			"mainEntity": {
+				"@type": "FAQPage",
+				"mainEntity": [
+					{
+						"@type": "Question",
+						"name": "What is the mempool?",
+						"acceptedAnswer": {
+							"@type": "Answer",
+							"text": "The mempool is a holding area for unconfirmed Bitcoin transactions. It reflects network congestion and helps users gauge optimal transaction fees."
+						}
+					},
+					{
+						"@type": "Question",
+						"name": "What does Bitcoin's mining difficulty mean?",
+						"acceptedAnswer": {
+							"@type": "Answer",
+							"text": "Mining difficulty adjusts to ensure a consistent rate of block production (approximately every 10 minutes). It rises or falls depending on network hash power."
+						}
+					},
+					{
+						"@type": "Question",
+						"name": "How are transaction fees determined?",
+						"acceptedAnswer": {
+							"@type": "Answer",
+							"text": "Fees are influenced by network demand and transaction size. Higher fees increase the likelihood of faster confirmation."
+						}
+					},
+					{
+						"@type": "Question",
+						"name": "What is a halving event?",
+						"acceptedAnswer": {
+							"@type": "Answer",
+							"text": "Bitcoin's block reward is halved approximately every four years. This event impacts miner rewards and the cryptocurrency's supply rate."
+						}
+					}
+				]
+			}
+		}
 block content
 
 
@@ -14,7 +57,7 @@ block content
 	- var tzDay = tzMoment.format("MM-DD");
 
 	if (global.btcHolidays.byDay[tzDay])
-		
+
 		- var day = tzDay;
 		- var dom = parseInt(day.substring(3));
 		- var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -28,9 +71,11 @@ block content
 				each item in global.btcHolidays.byDay[tzDay]
 					h6.fs-5.text-uppercase.fw-light.text-card-highlight.mt-3 #{item.name}!
 						span.ms-2 (#{months[currentMonth]} #{dom})
-				
+
 					.mb-0 !{item.desc}
 
+	h1.title BTCfees.org: Real-Time Bitcoin Fee and Blockchain Insights.
+	h3.introduction BTCfees.org provides real-time insights into Bitcoin network activity, including transaction fees, mempool dynamics, and blockchain data. Explore tools and analytics designed to help users navigate Bitcoin’s blockchain effectively.
 	if (getblockchaininfo == null)
 		div.alert.alert-danger
 			h5.mb-3 Unable to get basic blockchain data
@@ -45,31 +90,31 @@ block content
 						div Check your RPC connection info and/or check this application's error log for possible hints about the cause of this issue.
 	else
 
-		+dismissableAlert("homepageWelcomeBannerDismissed")
-			h5 Bitcoin Explorer
-				span.fw-light :
-					span.fst-italic.ms-1 The free, open-source, easy-to-setup, easy-to-use, self-hosted explorer
-			
+		//+dismissableAlert("homepageWelcomeBannerDismissed")
+		//	h5 Bitcoin Explorer
+		//		span.fw-light :
+		//			span.fst-italic.ms-1 The free, open-source, easy-to-setup, easy-to-use, self-hosted explorer
+		//
+		//
+		//	span.fw-light Protect your privacy while enjoying the conveniences of public explorers. Made for Bitcoiners by Bitcoiners. Enjoy!
+		//
+		//	hr
+		//
+		//	.mt-2
+		//		if (global.sourcecodeProjectMetadata)
+		//			a.btn.btn-sm.btn-primary.mb-2.mb-md-1.me-3(href="https://github.com/janoside/btc-rpc-explorer", title="View source code", data-bs-toggle="tooltip", data-bs-placement="bottom")
+		//				i.bi-git.fs-6.text-white.me-2
+		//				| View Source
+		//
+		//		a.btn.btn-sm.btn-primary.mb-2.mb-md-1.me-3(href="https://donate.bitcoinexplorer.org", target="_blank", title="Support this project with a donation", data-bs-toggle="tooltip", data-bs-placement="bottom")
+		//			i.bi-heart-fill.fs-6.text-danger.me-2
+		//			| Donate
+		//
+		//		a.btn.btn-sm.btn-primary.mb-2.mb-md-1.me-3(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow @BitcoinExplorer on Twitter", data-bs-toggle="tooltip", data-bs-placement="bottom")
+		//			i.bi-twitter.fs-6.text-twitter.me-2
+		//			| @BitcoinExplorer
 
-			span.fw-light Protect your privacy while enjoying the conveniences of public explorers. Made for Bitcoiners by Bitcoiners. Enjoy!
 
-			hr
-
-			.mt-2
-				if (global.sourcecodeProjectMetadata)
-					a.btn.btn-sm.btn-primary.mb-2.mb-md-1.me-3(href="https://github.com/janoside/btc-rpc-explorer", title="View source code", data-bs-toggle="tooltip", data-bs-placement="bottom")
-						i.bi-git.fs-6.text-white.me-2
-						| View Source
-
-				a.btn.btn-sm.btn-primary.mb-2.mb-md-1.me-3(href="https://donate.bitcoinexplorer.org", target="_blank", title="Support this project with a donation", data-bs-toggle="tooltip", data-bs-placement="bottom")
-					i.bi-heart-fill.fs-6.text-danger.me-2
-					| Donate
-					
-				a.btn.btn-sm.btn-primary.mb-2.mb-md-1.me-3(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow @BitcoinExplorer on Twitter", data-bs-toggle="tooltip", data-bs-placement="bottom")
-					i.bi-twitter.fs-6.text-twitter.me-2
-					| @BitcoinExplorer
-
-		
 		if (global.activeBlockchain == "main")
 			if (getblockchaininfo.softforks && getblockchaininfo.softforks.taproot && getblockchaininfo.softforks.taproot.bip9)
 				- var minTaprootHeight = getblockchaininfo.softforks.taproot.bip9.min_activation_height;
@@ -85,7 +130,7 @@ block content
 					.alert.alert-success
 						h5 Taproot: Activation Height Reached 🎉
 						| Taproot has activated on Bitcoin's mainnet as of block height <a href="./block-height/709632">709,632</a>!
-				
+
 
 		if (getblockchaininfo.initialblockdownload && !["regtest", "signet"].includes(global.activeBlockchain))
 			div.alert.alert-warning.shadow-sm.border.mb-3
@@ -93,17 +138,17 @@ block content
 
 				div.mb-1 Your node is currently downloading and verifying blockchain data. Until the process is finished, some features of this tool will be unusable and/or unreliable.
 
-				span.fw-bold Progress: 
+				span.fw-bold Progress:
 				span #{new Decimal(getblockchaininfo.verificationprogress).times(100).toDP(3)}%
 
 
-		
+
 		include includes/index-network-summary.pug
-		
-		
-		
-		
-						
+
+
+
+
+
 
 
 		if (latestBlocks)
@@ -119,11 +164,47 @@ block content
 				- var blockOffset = 0;
 
 				include includes/blocks-list.pug
-							
+
 
 		+contentSection("Tools")
 			include includes/tools-card.pug
-				
+
+		.mb-section
+			.card.mb-section.shadow-sm.border-2
+				.card-body
+					h4.promo-title Cryptocurrency Concepts Overview
+					ul.promo-list
+						li.promolist-item
+							b Mempool:
+							span  The mempool (short for memory pool) holds unconfirmed Bitcoin transactions. Transactions remain here until miners include them in a block.
+						li.promolist-item
+							b Difficulty:
+							span  Bitcoin’s mining difficulty adjusts approximately every two weeks to ensure blocks are added to the blockchain at a consistent rate of one every 10 minutes.
+						li.promolist-item
+							b Transaction Fees:
+							span  Miners prioritize transactions with higher fees. Understanding fee rates helps optimize transaction confirmation times.
+						li.promolist-item
+							b Halving Events:
+							span  Every four years, Bitcoin’s block reward is halved. This event reduces the number of new bitcoins entering circulation, impacting supply and demand dynamics.
+
+		.mb-section
+			.card.mb-section.shadow-sm.border-2
+				.card-body
+					h4.promo-title FAQ:
+					ul.promo-list
+						li.promo-list-item
+							h5 What is the mempool?
+							span The mempool is a holding area for unconfirmed Bitcoin transactions. It reflects network congestion and helps users gauge optimal transaction fees.
+						li.promo-list-item
+							h5 What does Bitcoin’s mining difficulty mean?
+							span Mining difficulty adjusts to ensure a consistent rate of block production (approximately every 10 minutes). It rises or falls depending on network hash power.
+						li.promo-list-item
+							h5 How are transaction fees determined?
+							span Fees are influenced by network demand and transaction size. Higher fees increase the likelihood of faster confirmation.
+						li.promo-list-item
+							h5 What is a halving event?
+							span Bitcoin’s block reward is halved approximately every four years. This event impacts miner rewards and the cryptocurrency’s supply rate.
+
 
 block endOfBody
 	script.
@@ -167,4 +248,4 @@ block endOfBody
 				setInterval(checkHalvingCountdown, 3000);
 			}
 		});
-		
+

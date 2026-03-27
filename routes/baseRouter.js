@@ -57,7 +57,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		res.locals.perfId = perfId;
 
 		res.locals.homepage = true;
-		
+
 		// don't need timestamp on homepage "blocks-list", this flag disables
 		res.locals.hideTimestampColumn = true;
 
@@ -117,7 +117,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		res.locals.getblockchaininfo = getblockchaininfo;
 
 		res.locals.difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
-			
+
 
 		let blockHeights = [];
 		if (getblockchaininfo.blocks) {
@@ -152,19 +152,19 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 		promises.push(utils.timePromise("homepage.getBlocksByHeight", async () => {
 			const latestBlocks = await coreApi.getBlocksByHeight(blockHeights);
-			
+
 			res.locals.latestBlocks = latestBlocks;
 			res.locals.blocksUntilDifficultyAdjustment = ((res.locals.difficultyPeriod + 1) * coinConfig.difficultyAdjustmentBlockCount) - latestBlocks[0].height;
 		}));
 
-		
+
 		let targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
 		res.locals.targetBlocksPerDay = targetBlocksPerDay;
 
 		if (false && getblockchaininfo.chain !== 'regtest') {
 			/*promises.push(new Promise(async (resolve, reject) => {
 				res.locals.txStats = await utils.timePromise("homepage.getTxStats", coreApi.getTxStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
-				
+
 				resolve();
 			}));*/
 
@@ -201,7 +201,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			res.locals.nextBlockMaxFeeTxid = nextBlockEstimate.maxFeeTxid;
 
 			res.locals.nextBlockTotalFees = nextBlockEstimate.totalFees;
-		
+
 		}, perfResults));*/
 
 
@@ -232,7 +232,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 	} catch (err) {
 		utils.logError("238023hw87gddd", err);
-					
+
 		res.locals.userMessage = "Error building page: " + err;
 
 		await utils.timePromise("homepage.render", async () => {
@@ -276,15 +276,19 @@ router.get("/node-details", asyncHandler(async (req, res, next) => {
 
 		res.locals.perfResults = perfResults;
 
+		res.locals.metaTitle = "Node Details - Version, Uptime, and Peers | BTCfees.org";
+		res.locals.metaDesc = "Discover the basics of the Bitcoin node, including version, uptime, and peer connections. Real-time data on BTCfees.org.";
+		res.locals.canonicalPart = "node-details"
+
 		await utils.timePromise("node-details.render", async () => {
 			res.render("node-details");
 		}, perfResults);
-		
+
 		next();
 
 	} catch (err) {
 		utils.logError("32978efegdde", err);
-					
+
 		res.locals.userMessage = "Error building page: " + err;
 
 		await utils.timePromise("node-details.render", async () => {
@@ -299,6 +303,10 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 	try {
 		res.locals.satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;
 
+		res.locals.metaTitle = "Mempool Summary - Bitcoin Transactions | BTCfees.org";
+		res.locals.metaDesc = "Analyze the current Bitcoin mempool, including transaction counts, fees, and unconfirmed transaction data.";
+		res.locals.canonicalPart = "mempool-summary"
+
 		await utils.timePromise("mempool-summary/render", async () => {
 			res.render("mempool-summary");
 		});
@@ -307,7 +315,7 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 
 	} catch (err) {
 		utils.logError("390824yw7e332", err);
-					
+
 		res.locals.userMessage = "Error building page: " + err;
 
 		res.render("mempool-summary");
@@ -320,6 +328,9 @@ router.get("/peers", asyncHandler(async (req, res, next) => {
 	try {
 		const { perfId, perfResults } = utils.perfLogNewItem({action:"peers"});
 		res.locals.perfId = perfId;
+		res.locals.metaTitle = "Node Peers - Bitcoin Network | BTCfees.org";
+		res.locals.metaDesc = "View detailed information about peers connected to this Bitcoin node.";
+		res.locals.canonicalPart = "peers"
 
 		const promises = [];
 
@@ -327,7 +338,7 @@ router.get("/peers", asyncHandler(async (req, res, next) => {
 			res.locals.peerSummary = await coreApi.getPeerSummary();
 		}, perfResults));
 
-		
+
 		await utils.awaitPromises(promises);
 
 		let peerSummary = res.locals.peerSummary;
@@ -347,7 +358,7 @@ router.get("/peers", asyncHandler(async (req, res, next) => {
 			res.locals.peerIpSummary = await utils.timePromise("peers.geoLocateIpAddresses", async () => {
 				return await utils.geoLocateIpAddresses(peerIps)
 			}, perfResults);
-			
+
 			res.locals.mapBoxComApiAccessKey = config.credentials.mapBoxComApiAccessKey;
 		}
 
@@ -360,7 +371,7 @@ router.get("/peers", asyncHandler(async (req, res, next) => {
 
 	} catch (err) {
 		utils.logError("394rhweghe", err);
-					
+
 		res.locals.userMessage = "Error: " + err;
 
 		await utils.timePromise("peers.render", async () => {
@@ -517,6 +528,9 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 		res.locals.offset = offset;
 		res.locals.sort = sort;
 		res.locals.paginationBaseUrl = "./blocks";
+		res.locals.metaTitle = "Bitcoin Blockchain Blocks - Browse All | BTCfees.org";
+		res.locals.metaDesc = "Explore the Bitcoin blockchain. Browse detailed data on all blocks, including transactions, fees, and timestamps.";
+		res.locals.canonicalPart = "blocks"
 
 		// if pruning is active, global.pruneHeight is used when displaying this page
 		// global.pruneHeight is updated whenever we send a getblockchaininfo RPC to the node
@@ -552,7 +566,7 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 			res.locals.blocks = await coreApi.getBlocksByHeight(blockHeights);
 		}, perfResults));
 
-		
+
 		promises.push(utils.timePromise("blocks.getBlocksByHeight", async () => {
 			try {
 				let rawblockstats = await coreApi.getBlocksStatsByHeight(blockHeights);
@@ -605,6 +619,10 @@ router.get("/mining-summary", asyncHandler(async (req, res, next) => {
 
 		res.locals.currentBlockHeight = getblockchaininfo.blocks;
 
+		res.locals.metaTitle = "Bitcoin Mining Summary - Stats and Trends | BTCfees.org";
+		res.locals.metaDesc = "Analyze Bitcoin mining data, including recent block rewards, difficulty adjustments, and hash rates.";
+		res.locals.canonicalPart = "mining-summary"
+
 		await utils.timePromise("mining-summary.render", async () => {
 			res.render("mining-summary");
 		});
@@ -627,7 +645,7 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 		const extendedPubkey = req.params.extendedPubkey;
 		res.locals.extendedPubkey = extendedPubkey;
 
-		
+
 		let limit = 20;
 		if (req.query.limit) {
 			limit = parseInt(req.query.limit);
@@ -640,7 +658,7 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 		}
 		res.locals.offset = offset;
 
-		
+
 		res.locals.paginationBaseUrl = `./xyzpub/${extendedPubkey}`;
 
 		res.locals.metaTitle = `Extended Public Key: ${utils.ellipsizeMiddle(extendedPubkey, 24)}`;
@@ -663,7 +681,7 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 			res.locals.pubkeyTypeDesc = "Pay to Public Key Hash";
 			res.locals.bip32Path = "m/44'/0'";
 
-			
+
 			let xpub = extendedPubkey;
 			if (!extendedPubkey.startsWith(xpub_tpub)) {
 				xpub = utils.xpubChangeVersionBytes(extendedPubkey, xpub_tpub);
@@ -840,6 +858,10 @@ router.get("/block-stats", asyncHandler(async (req, res, next) => {
 		const getblockchaininfo = await coreApi.getBlockchainInfo();
 		res.locals.currentBlockHeight = getblockchaininfo.blocks;
 
+		res.locals.metaTitle = "Bitcoin Block Statistics | BTCfees.org";
+		res.locals.metaDesc = "View summary data for Bitcoin blocks over a configurable range.";
+		res.locals.canonicalPart = "block-stats"
+
 		await utils.timePromise("block-stats.render", async () => {
 			res.render("block-stats");
 		});
@@ -868,6 +890,9 @@ router.get("/next-block", asyncHandler(async (req, res, next) => {
 	res.locals.minFeeRate = 1000000;
 	res.locals.maxFeeRate = -1;
 	res.locals.medianFeeRate = -1;
+	res.locals.metaTitle = "Next Block Prediction - Bitcoin Blockchain | BTCfees.org";
+	res.locals.metaDesc = "View predictions for the next Bitcoin block, including transactions and fees based on real-time mempool data.";
+	res.locals.canonicalPart = "next-block"
 
 	const parentTxIndexes = new Set();
 	blockTemplate.transactions.forEach(tx => {
@@ -920,7 +945,7 @@ router.get("/next-block", asyncHandler(async (req, res, next) => {
 
 	res.locals.blockTemplate = blockTemplate;
 
-	
+
 	await utils.timePromise("next-block.render", async () => {
 		res.render("next-block");
 	});
@@ -947,22 +972,22 @@ router.post("/search", function(req, res, next) {
 	let rawCaseQuery = req.body.query.trim();
 
 	req.session.query = req.body.query;
-	
+
 	// xpub/ypub/zpub -> redirect: /xyzpub/XXX
 	if (rawCaseQuery.match(/^(xpub|ypub|zpub|Ypub|Zpub).*$/)) {
 		res.redirect(`./xyzpub/${rawCaseQuery}`);
-		
+
 		return;
 	}
 
 	// tpub/upub/vpub -> redirect: /xyzpub/XXX
 	if (rawCaseQuery.match(/^(tpub|upub|vpub|Upub|Vpub).*$/)) {
 		res.redirect(`./xyzpub/${rawCaseQuery}`);
-		
+
 		return;
 	}
-	
-	
+
+
 	// Support txid@height lookups
 	if (/^[a-f0-9]{64}@\d+$/.test(query)) {
 		return res.redirect("./tx/" + query);
@@ -995,7 +1020,7 @@ router.post("/search", function(req, res, next) {
 				if (!global.txindexAvailable) {
 					req.session.userMessage += noTxIndexMsg;
 				}
-				
+
 				res.redirect("./");
 			});
 		});
@@ -1003,7 +1028,7 @@ router.post("/search", function(req, res, next) {
 	} else if (!isNaN(query)) {
 		coreApi.getBlockByHeight(parseInt(query)).then(function(blockByHeight) {
 			res.redirect("./block-height/" + query);
-			
+
 		}).catch(function(err) {
 			req.session.userMessage = "No results found for query: " + query;
 
@@ -1024,6 +1049,10 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 		let blockHeight = parseInt(req.params.blockHeight);
 
 		res.locals.blockHeight = blockHeight;
+
+		res.locals.metaTitle = `Bitcoin Block #${blockHeight} - Transactions and Fees | BTCfees.org`;
+		res.locals.metaDesc = `Details for Bitcoin block #${blockHeight}, including transaction count, fees, size, and miner details.`;
+		res.locals.canonicalPart = `block-height/${blockHeight}`
 
 		res.locals.result = {};
 
@@ -1071,7 +1100,7 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 		promises.push(utils.timePromise("block-height.getBlockStats", async () => {
 			try {
 				const blockStats = await coreApi.getBlockStats(result.hash);
-				
+
 				res.locals.result.blockstats = blockStats;
 
 			} catch (err) {
@@ -1101,10 +1130,10 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 				res.locals.metaDesc = "";
 			}
 		} else {
-			res.locals.metaTitle = `Bitcoin Block #${blockHeight.toLocaleString()}`;
-			res.locals.metaDesc = "";
+			res.locals.metaTitle = `Bitcoin Block #${blockHeight} - Transactions and Fees | BTCfees.org`;;
+			res.locals.metaDesc = `Details for Bitcoin block #${blockHeight}, including transaction count, fees, size, and miner details.`;;
 		}
-		
+
 
 		await utils.timePromise("block-height.render", async () => {
 			res.render("block");
@@ -1173,7 +1202,7 @@ router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 		promises.push(utils.timePromise("block.getBlockStats", async () => {
 			try {
 				const blockStats = await coreApi.getBlockStats(blockHash);
-				
+
 				res.locals.result.blockstats = blockStats;
 
 			} catch (err) {
@@ -1207,7 +1236,7 @@ router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 			res.locals.metaDesc = "";
 		}
 
-		
+
 		await utils.timePromise("block.render", async () => {
 			res.render("block");
 		}, perfResults);
@@ -1237,7 +1266,7 @@ router.get("/predicted-blocks", asyncHandler(async (req, res, next) => {
 
 	} catch (err) {
 		utils.logError("2083ryw0efghsu", err);
-					
+
 		res.locals.userMessage = "Error building page: " + err;
 
 		res.render("predicted-blocks");
@@ -1253,7 +1282,7 @@ router.get("/predicted-blocks-old", asyncHandler(async (req, res, next) => {
 
 		const blockTemplate = {weight: 0, totalFees: new Decimal(0), vB: 0, txCount:0, txids: []};
 		const blocks = [];
-		
+
 		mempoolTxSummaries.sort((a, b) => {
 			let aFeeRate = (a.f + a.af) / (a.w + a.asz * 4);
 			let bFeeRate = (b.f + b.af) / (b.w + b.asz * 4);
@@ -1355,6 +1384,10 @@ router.get("/block-analysis/:blockHashOrHeight", function(req, res, next) {
 });
 
 router.get("/block-analysis", function(req, res, next) {
+	res.locals.metaTitle = "Detailed Bitcoin Block Analysis | BTCfees.org";
+	res.locals.metaDesc = "Analyze all transactions in a Bitcoin block, including fees and sizes.";
+	res.locals.canonicalPart = "block-analysis"
+
 	res.render("block-analysis-search");
 
 	next();
@@ -1395,7 +1428,7 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 
 		let txInputLimit = (res.locals.crawlerBot) ? 3 : -1;
 
-		let txPromise = req.query.blockHeight ? 
+		let txPromise = req.query.blockHeight ?
 				async () => {
 					const block = await coreApi.getBlockByHeight(parseInt(req.query.blockHeight));
 					res.locals.block = block;
@@ -1427,7 +1460,7 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 				res.locals.mempoolDetails = await coreApi.getMempoolTxDetails(txid, true);
 
 			}, perfResults));
-			
+
 		} else {
 			promises.push(utils.timePromise("tx.getblockheader", async () => {
 				let rpcResult = await rpcApi.getRpcDataWithParams({method:'getblockheader', parameters:[tx.blockhash]});
@@ -1449,12 +1482,13 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 				res.locals.metaDesc = "";
 			}
 		} else {
-			res.locals.metaTitle = `Bitcoin Transaction ${utils.ellipsizeMiddle(txid, 16)}`;
-			res.locals.metaDesc = "";
+			res.locals.metaTitle = `Bitcoin Transaction ${utils.ellipsizeMiddle(txid, 16)} - Details | BTCfees.org`;
+			res.locals.metaDesc = `Explore details of Bitcoin transaction ${utils.ellipsizeMiddle(txid, 16)}, including inputs, outputs, fees, and size.`;
+			res.locals.canonicalPart = `tx/${txid}`
 		}
 
 		res.locals.perfResults = perfResults;
-		
+
 		await utils.timePromise("tx.render", async () => {
 			res.render("transaction");
 		}, perfResults);
@@ -1476,7 +1510,7 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 			res.locals.userMessageMarkdown = `Failed to load transaction: txid=**${txid}**`;
 		}
 
-		
+
 
 		utils.logError("1237y4ewssgt", err);
 
@@ -1501,7 +1535,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 		res.locals.maxTxOutputDisplayCount = config.site.addressPage.txOutputMaxDefaultDisplay;
 
-		
+
 		if (req.query.limit) {
 			limit = parseInt(req.query.limit);
 
@@ -1531,7 +1565,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		res.locals.paginationBaseUrl = `./address/${address}?sort=${sort}`;
 		res.locals.transactions = [];
 		res.locals.addressApiSupport = addressApi.getCurrentAddressApiFeatureSupport();
-		
+
 		res.locals.result = {};
 
 		let parseAddressData = utils.tryParseAddress(address);
@@ -1607,11 +1641,11 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 							: coreApi.getRawTransactionsByHeights(txids, blockHeightsByTxid)
 								.then(transactions => ({ transactions, txInputsByTransaction: {} }))
 						);
-						
+
 						res.locals.transactions = rawTxResult.transactions;
 						res.locals.txInputsByTransaction = rawTxResult.txInputsByTransaction;
 
-						
+
 						// for coinbase txs, we need the block height in order to calculate subsidy to display
 						let coinbaseTxs = [];
 						for (let i = 0; i < rawTxResult.transactions.length; i++) {
@@ -1661,7 +1695,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 						for (let i = 0; i < rawTxResult.transactions.length; i++) {
 							let tx = rawTxResult.transactions[i];
 							let txInputs = rawTxResult.txInputsByTransaction[tx.txid] || {};
-							
+
 							if (handledTxids.includes(tx.txid)) {
 								continue;
 							}
@@ -1716,14 +1750,14 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 				const url = await qrcode.toDataURL(address);
 
 				res.locals.addressQrCodeUrl = url;
-				
+
 			} catch(err) {
 				res.locals.pageErrors.push(utils.logError("93ygfew0ygf2gf2", err));
 			}
 		}, perfResults));
 
 		await utils.awaitPromises(promises);
-		
+
 		await utils.timePromise("address.render", async () => {
 			res.render("address");
 		}, perfResults);
@@ -1757,6 +1791,10 @@ router.get("/next-halving", asyncHandler(async (req, res, next) => {
 		res.locals.getblockchaininfo = getblockchaininfo;
 		res.locals.difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
 
+		res.locals.metaTitle = "Bitcoin Next Halving Countdown | BTCfees.org";
+		res.locals.metaDesc = "Estimated details and countdown for the next Bitcoin halving event.";
+		res.locals.canonicalPart = "next-halving"
+
 		let blockHeights = [];
 		if (getblockchaininfo.blocks) {
 			for (let i = 0; i < 1; i++) {
@@ -1775,7 +1813,7 @@ router.get("/next-halving", asyncHandler(async (req, res, next) => {
 
 		promises.push(utils.timePromise("homepage.getBlocksByHeight", async () => {
 			const latestBlocks = await coreApi.getBlocksByHeight(blockHeights);
-			
+
 			res.locals.latestBlocks = latestBlocks;
 		}));
 
@@ -1806,7 +1844,7 @@ router.get("/next-halving", asyncHandler(async (req, res, next) => {
 router.get("/rpc-terminal", function(req, res, next) {
 	if (!config.demoSite && !req.authenticated) {
 		res.send("RPC Terminal / Browser require authentication. Set an authentication password via the 'BTCEXP_BASIC_AUTH_PASSWORD' environment variable (see .env-sample file for more info).");
-		
+
 		next();
 
 		return;
@@ -1853,7 +1891,7 @@ router.post("/rpc-terminal", asyncHandler(async (req, res, next) => {
 	try {
 		const rpcResult = await rpcApi.getRpcDataWithParams({method:cmd, parameters:parsedParams});
 		const result = rpcResult;
-		
+
 		if (result) {
 			debugLog("Result[1]: " + JSON.stringify(result, null, 4));
 
@@ -1903,7 +1941,7 @@ router.get("/rpc-browser", asyncHandler(async (req, res, next) => {
 
 			if (!req.session.recentRpcCommands.includes(method)) {
 				req.session.recentRpcCommands.unshift(method);
-				
+
 				while (req.session.recentRpcCommands.length > 5) {
 					req.session.recentRpcCommands.pop();
 				}
@@ -1916,7 +1954,7 @@ router.get("/rpc-browser", asyncHandler(async (req, res, next) => {
 
 			if (req.query.execute) {
 				let argDetails = methodHelp.args;
-				
+
 				if (req.query.args) {
 					debugLog("ARGS: " + JSON.stringify(req.query.args));
 
@@ -1968,14 +2006,14 @@ router.get("/rpc-browser", asyncHandler(async (req, res, next) => {
 								if (req.query.args[i]) {
 									argValues.push(JSON.parse(req.query.args[i]));
 								}
-								
+
 								break;
 
 							} else if (argProperties[j] === "json object") {
 								if (req.query.args[i]) {
 									argValues.push(JSON.parse(req.query.args[i]));
 								}
-								
+
 								break;
 
 							} else {
@@ -1997,7 +2035,7 @@ router.get("/rpc-browser", asyncHandler(async (req, res, next) => {
 					return;
 				}
 
-				//let csrfPromise = 
+				//let csrfPromise =
 
 				await new Promise((resolve, reject) => {
 					forceCsrf(req, res, async (err) => {
@@ -2048,13 +2086,13 @@ router.get("/rpc-browser", asyncHandler(async (req, res, next) => {
 						return next(err);
 					}
 
-					
+
 				});*/
 			}
 		}
 	} catch (err) {
 		res.locals.pageErrors.push(utils.logError("23ewyf0weee", err, {method:method, params:argValues}));
-		
+
 		res.locals.userMessage = "Error loading help content: " + err;
 	}
 
@@ -2125,7 +2163,7 @@ router.get("/mempool-transactions", asyncHandler(async (req, res, next) => {
 		const txids = mempoolData.txids;
 		res.locals.txCount = mempoolData.txCount;
 
-		
+
 		const promises = [];
 
 		promises.push(utils.timePromise("mempool-tx.getRawTransactionsWithInputs", async () => {
@@ -2145,6 +2183,10 @@ router.get("/mempool-transactions", asyncHandler(async (req, res, next) => {
 			}, perfResults));
 		});
 
+		res.locals.metaTitle = "Browse Pending Bitcoin Transactions | BTCfees.org";
+		res.locals.metaDesc = "View unconfirmed Bitcoin transactions in the mempool. Analyze fees, sizes, and submission times.";
+		res.locals.canonicalPart = "mempool-transactions"
+
 
 		await utils.awaitPromises(promises);
 
@@ -2157,7 +2199,7 @@ router.get("/mempool-transactions", asyncHandler(async (req, res, next) => {
 
 	} catch (err) {
 		utils.logError("3297gfsdyde3q", err);
-					
+
 		res.locals.userMessage = "Error building page: " + err;
 
 		await utils.timePromise("mempool-transactions.render", async () => {
@@ -2173,6 +2215,10 @@ router.get("/tx-stats", asyncHandler(async (req, res, next) => {
 	const perfResults = {};
 
 	res.locals.getblockchaininfo = await coreApi.getBlockchainInfo();
+	res.locals.metaTitle = "Bitcoin Transaction Statistics | BTCfees.org";
+	res.locals.metaDesc = "View graphs of Bitcoin transaction volumes and rates over time.";
+	res.locals.canonicalPart = "tx-stats"
+
 	let tipHeight = res.locals.getblockchaininfo.blocks;
 
 	// only re-calculate tx-stats every X blocks since it's data heavy
@@ -2187,7 +2233,7 @@ router.get("/tx-stats", asyncHandler(async (req, res, next) => {
 
 	promises.push(utils.timePromise("tx-stats.getTxStats-day", async () => {
 		const statsDay = await coreApi.getTxStats(144, height - 144, height);
-		
+
 		res.locals.txStatsDay = statsDay;
 	}, perfResults));
 
@@ -2220,6 +2266,10 @@ router.get("/tx-stats", asyncHandler(async (req, res, next) => {
 router.get("/difficulty-history", function(req, res, next) {
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.blockCount = getblockchaininfo.blocks;
+
+		res.locals.metaTitle = "Bitcoin Difficulty History | BTCfees.org";
+		res.locals.metaDesc = "Explore historical changes in Bitcoin mining difficulty over time.";
+		res.locals.canonicalPart = "difficulty-history"
 
 		res.render("difficulty-history");
 
@@ -2267,7 +2317,7 @@ router.get("/fun", function(req, res, next) {
 	}
 
 	let listNewFirst = coins[config.coin].historicalData;
-	
+
 	listNewFirst.sort(function(a, b) {
 		if (a.date > b.date) {
 			return -1;
@@ -2331,7 +2381,10 @@ router.get("/fun", function(req, res, next) {
 	res.locals.itemYears = itemYears;
 	res.locals.listByMonth = listByMonth;
 	res.locals.itemMonths = itemMonths;
-	
+	res.locals.metaTitle = "Fun Bitcoin Facts and Historical Data | BTCfees.org";
+	res.locals.metaDesc = "Discover curated fun and interesting historical blockchain data on BTCfees.org.";
+	res.locals.canonicalPart = "fun"
+
 	res.render("fun");
 
 	next();
@@ -2348,7 +2401,7 @@ router.get("/quotes", function(req, res, next) {
 		listNewFirst[i].quoteIndex = i;
 	}
 	listNewFirst = listNewFirst.filter(x => { return !x.duplicateIndex; });
-	
+
 	listNewFirst.sort(function(a, b) {
 		let dateCompare = b.date.localeCompare(a.date);
 
@@ -2405,6 +2458,9 @@ router.get("/quotes", function(req, res, next) {
 	res.locals.itemYears = itemYears;
 	res.locals.listByMonth = listByMonth;
 	res.locals.itemMonths = itemMonths;
+	res.locals.metaTitle = "Famous Bitcoin Quotes | BTCfees.org";
+	res.locals.metaDesc = "Explore a curated list of Bitcoin-related quotes from influential figures.";
+	res.locals.canonicalPart = "quotes"
 
 	res.render("quotes");
 
@@ -2413,6 +2469,10 @@ router.get("/quotes", function(req, res, next) {
 
 router.get("/holidays", function(req, res, next) {
 	res.locals.btcHolidays = global.btcHolidays;
+
+	res.locals.metaTitle = "Bitcoin Holidays - Milestones in Blockchain History | BTCfees.org";
+	res.locals.metaDesc = "Learn about significant milestones and events celebrated in the Bitcoin community.";
+	res.locals.canonicalPart = "holidays"
 
 	res.render("holidays");
 
@@ -2437,6 +2497,10 @@ router.get("/quote/:quoteIndex", function(req, res, next) {
 });
 
 router.get("/bitcoin-whitepaper", function(req, res, next) {
+	res.locals.metaTitle = "Bitcoin Whitepaper - Extracted from the Blockchain | BTCfees.org";
+	res.locals.metaDesc = "Access the original Bitcoin whitepaper directly from data embedded in the blockchain.";
+	res.locals.canonicalPart = "bitcoin-whitepaper"
+
 	res.render("bitcoin-whitepaper");
 
 	next();

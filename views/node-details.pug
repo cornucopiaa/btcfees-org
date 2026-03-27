@@ -1,18 +1,55 @@
 extends layout
 
 block headContent
-	title Node Details
-	
+	script(type="application/ld+json").
+		{
+			"@context": "https://schema.org",
+			"@type": "Dataset",
+			"name": "Bitcoin Node Details Dataset",
+			"description": "This dataset provides real-time information about a Bitcoin node including version, uptime, number of peer connections, and other essential metadata.",
+			"url": "https://btcfees.org/node-details",
+			"keywords": ["Bitcoin", "node details", "uptime", "version", "peer connections", "BTC node"],
+			"creator": {
+				"@type": "Organization",
+				"name": "BTCfees.org",
+				"url": "https://btcfees.org"
+			},
+			"license": "https://www.gnu.org/licenses/agpl-3.0.html",
+			"distribution": {
+				"@type": "DataDownload",
+				"encodingFormat": "application/json",
+				"contentUrl": "https://btcfees.org/api/node-details"
+			},
+			"variableMeasured": [
+				{
+					"@type": "PropertyValue",
+					"name": "Node Version",
+					"description": "Current version of the running Bitcoin node software."
+				},
+				{
+					"@type": "PropertyValue",
+					"name": "Uptime",
+					"description": "How long the node has been continuously online."
+				},
+				{
+					"@type": "PropertyValue",
+					"name": "Peer Connections",
+					"description": "The number of other nodes connected to this node."
+				}
+			],
+			"dateModified": "2025-06-23"
+		}
+
 block content
 	+pageTitle("Node Details")
 
 	if (getblockchaininfo)
 		if (false)
-			p Data from RPC commands 
+			p Data from RPC commands
 				a(href="./rpc-browser?method=getblockchaininfo") getblockchaininfo
-				span , 
+				span ,
 				a(href="./rpc-browser?method=getnetworkinfo") getnetworkinfo
-				span , and 
+				span , and
 				a(href="./rpc-browser?method=getnettotals") getnettotals
 
 		if (false)
@@ -88,7 +125,7 @@ block content
 									span.border-dotted(title="This is the latest block for which your node has all block data; blocks older than this one have had some or all non-essential details deleted.", data-bs-toggle="tooltip")
 										| #{getblockchaininfo.pruneheight.toLocaleString()}+
 									| )
-								
+
 								if (false)
 									br
 
@@ -96,7 +133,7 @@ block content
 
 									span :&nbsp;
 										- var pruneTargetSize = utils.formatLargeNumber(getblockchaininfo.prune_target_size, 1);
-								
+
 										span #{pruneTargetSize[0]} #{pruneTargetSize[1].abbreviation}B
 
 						+summaryItem("Data Indexes", "Status of available indices currently running in this node")
@@ -131,7 +168,7 @@ block content
 							"bip65":  { "link": "https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki", "title": "OP_CHECKLOCKTIMEVERIFY" },
 							"bip66":  { "link": "https://github.com/bitcoin/bips/blob/master/bip-0066.mediawiki", "title": "Strict DER signatures" },
 							"csv":    { "link": "https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki", "title": "OP_CHECKSEQUENCEVERIFY" },
-							"segwit": { "link": "https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki", "title": "Segregated Witness (Consensus layer)" }, 
+							"segwit": { "link": "https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki", "title": "Segregated Witness (Consensus layer)" },
 							"taproot":{ "link": "https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki", "title": "Taproot: SegWit version 1 spending rules" }
 						};
 
@@ -252,8 +289,8 @@ block content
 												span.me-2 :
 												| #{item.bip9.min_activation_height.toLocaleString()}
 
-										
-										
+
+
 
 
 				+contentSection("Network")
@@ -280,11 +317,11 @@ block content
 						+summaryItem("Download", "Total bytes received since this node started")
 							- var downData = utils.formatLargeNumber(getnettotals.totalbytesrecv, 1);
 							- var downRateData = utils.formatLargeNumber(getnettotals.totalbytesrecv / uptimeSeconds, 1);
-							
+
 							i.bi-arrow-down.me-2
 							span.me-2 #{downData[0]} #{downData[1].abbreviation}B
 							small.text-muted (#{downRateData[0]} #{downRateData[1].abbreviation}B/s)
-							
+
 					if (getnetworkinfo.networks)
 						hr.my-4
 
@@ -294,7 +331,7 @@ block content
 									div
 										if (item.proxy)
 											small.text-muted.me-2 (#{item.proxy})
-											
+
 										if (item.reachable)
 											span.border-dotted(title="Reachable", data-bs-toggle="tooltip")
 												i.bi-check2.text-success
@@ -318,9 +355,9 @@ block content
 
 									if (getnetworkinfo.localaddresses.length == 0)
 										li None
-								
-							
-							
+
+
+
 
 			+pageTab("JSON")
 
@@ -333,29 +370,28 @@ block content
 						a.nav-link(data-bs-toggle="tab", href="#tab-getnetworkinfo", role="tab") getnetworkinfo
 					li.nav-item
 						a.nav-link(data-bs-toggle="tab", href="#tab-getindexinfo", role="tab") getindexinfo
-				
+
 				div.tab-content
 					div.tab-pane.active(id="tab-getblockchaininfo", role="tabpanel")
 						+contentSection("getblockchaininfo")
 							pre
 								code.json(data-lang="json") #{JSON.stringify(getblockchaininfo, null, 4)}
-									
+
 
 					div.tab-pane(id="tab-getnettotals", role="tabpanel")
 						+contentSection("getnettotals")
 							pre
 								code.json(data-lang="json") #{JSON.stringify(getnettotals, null, 4)}
-									
+
 
 					div.tab-pane(id="tab-getnetworkinfo", role="tabpanel")
 						+contentSection("getnetworkinfo")
 							pre
 								code.json(data-lang="json") #{JSON.stringify(getnetworkinfo, null, 4)}
-									
+
 
 					div.tab-pane(id="tab-getindexinfo", role="tabpanel")
 						+contentSection("getindexinfo")
 							pre
 								code.json(data-lang="json") #{JSON.stringify(global.getindexinfo, null, 4)}
-									
-										
+

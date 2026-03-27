@@ -2,6 +2,28 @@ extends layout
 
 block headContent
 	title Blocks
+	each block, blockIndex in blocks
+		if (blockIndex !== blocks.length - 1)
+			script(type="application/ld+json").
+				{
+				"@context": "https://schema.org",
+				"@type": "BlockchainBlock",
+				"name": "Block ##{block.height}",
+				"url": "https://btcfees.org/block/#{block.hash}",
+				"blockchain": "Bitcoin",
+				"identifier": "#{block.hash}",
+				"height": #{block.height},
+				"timestamp": "#{new Date(block.time * 1000).toISOString()}",
+				"transactionCount": "#{block.nTx}",
+				"isPartOfBlockchain": {
+					"@type": "Blockchain",
+					"name": "Bitcoin"
+				},
+				"mainEntityOfPage": {
+					"@type": "WebPage",
+					"@id": "https://btcfees.org/block/#{block.height}"
+				}
+				}
 
 block content
 	.clearfix
@@ -11,7 +33,7 @@ block content
 			if (blocks)
 				nav(aria-label="Page navigation")
 					ul.pagination.justify-content-center.mt-3
-						
+
 						li.page-item(class=(sort == "desc" ? "active" : false))
 							a.page-link(href=(sort == "desc" ? "javascript:void(0)" : `./blocks?limit=${limit}&offset=0&sort=desc`))
 								span(aria-hidden="true") Newest blocks first
