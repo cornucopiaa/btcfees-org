@@ -1118,7 +1118,7 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 		await utils.awaitPromises(promises);
 
 
-		if (global.specialBlocks && global.specialBlocks[res.locals.result.getblock.hash]) {
+		if (global.specialBlocks && res.locals.result.getblock && global.specialBlocks[res.locals.result.getblock.hash]) {
 			let funInfo = global.specialBlocks[res.locals.result.getblock.hash];
 
 			res.locals.metaTitle = funInfo.summary;
@@ -1222,7 +1222,7 @@ router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 		await utils.awaitPromises(promises);
 
 
-		if (global.specialBlocks && global.specialBlocks[res.locals.result.getblock.hash]) {
+		if (global.specialBlocks && res.locals.result.getblock && global.specialBlocks[res.locals.result.getblock.hash]) {
 			let funInfo = global.specialBlocks[res.locals.result.getblock.hash];
 
 			res.locals.metaTitle = funInfo.summary;
