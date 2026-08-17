@@ -1155,11 +1155,14 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 }));
 
 router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
+	// declared out here so the catch block below can reference it
+	let blockHash = req.params.blockHash;
+
 	try {
 		const { perfId, perfResults } = utils.perfLogNewItem({action:"block"});
 		res.locals.perfId = perfId;
 
-		let blockHash = utils.asHash(req.params.blockHash);
+		blockHash = utils.asHash(req.params.blockHash);
 
 		res.locals.blockHash = blockHash;
 
@@ -1402,11 +1405,14 @@ router.get("/tx/:transactionId@:blockHeight", asyncHandler(async (req, res, next
 
 
 router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
+	// declared out here so the catch block below can reference it
+	let txid = req.params.transactionId;
+
 	try {
 		const { perfId, perfResults } = utils.perfLogNewItem({action:"transaction"});
 		res.locals.perfId = perfId;
 
-		let txid = utils.asHash(req.params.transactionId);
+		txid = utils.asHash(req.params.transactionId);
 
 		let output = -1;
 		if (req.query.output) {
