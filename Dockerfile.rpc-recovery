@@ -1,0 +1,16 @@
+# Patch the verified deployed app without changing dependencies or site assets.
+ARG APP_IMAGE=btc-fees-5
+FROM ${APP_IMAGE} AS patched
+WORKDIR /workspace
+RUN echo 'cb6e67c3df07df5d977cbf88f2c9d558a079007bd624fde637ac3ed068e6851e  app.js' | sha256sum -c - && \
+    echo 'f603f20312fc75442faf3d3fe6646a089077e43ca723516cb8aa8e1c79205b80  routes/baseRouter.js' | sha256sum -c -
+COPY app.js app.js
+COPY routes/baseRouter.js routes/baseRouter.js
+COPY app/rpcConnectionMonitor.js app/rpcConnectionMonitor.js
+COPY test/rpcConnectionMonitor.test.js test/rpcConnectionMonitor.test.js
+RUN node --check app.js && node --check routes/baseRouter.js && node --test test/rpcConnectionMonitor.test.js
+
+FROM ${APP_IMAGE}
+COPY --from=patched /workspace/app.js /workspace/app.js
+COPY --from=patched /workspace/routes/baseRouter.js /workspace/routes/baseRouter.js
+COPY --from=patched /workspace/app/rpcConnectionMonitor.js /workspace/app/rpcConnectionMonitor.js

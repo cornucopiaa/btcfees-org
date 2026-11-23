@@ -474,31 +474,24 @@ function loadHolidays(chain) {
 	});
 }
 
-function verifyRpcConnection() {
-	if (!global.activeBlockchain) {
-		debugLog(`Verifying RPC connection...`);
-
-		// normally in application code we target coreApi, but here we're trying to
-		// verify the RPC connection so we target rpcApi directly and include
-		// the second parameter "verifyingConnection=true", to bypass a
-		// fail-if-were-not-connected check
-
-		Promise.all([
-			rpcApi.getRpcData("getnetworkinfo", true),
-			rpcApi.getRpcData("getblockchaininfo", true),
-		]).then(([ getnetworkinfo, getblockchaininfo ]) => {
+const createRpcConnectionMonitor = require("./app/rpcConnectionMonitor");
+const verifyRpcConnection = createRpcConnectionMonitor({
+	isClientReady: () => global.rpcClient != null && global.rpcClientNoTimeout != null,
+	reconnect: connectToRpcServer,
+	probe: () => Promise.all([
+		rpcApi.getRpcData("getnetworkinfo", true),
+		rpcApi.getRpcData("getblockchaininfo", true),
+	]),
+	onHealthy: async ([getnetworkinfo, getblockchaininfo]) => {
+		global.rpcConnected = true;
+		if (!global.activeBlockchain) {
 			global.activeBlockchain = getblockchaininfo.chain;
-
-			// we've verified rpc connection, no need to keep trying
-			clearInterval(global.verifyRpcConnectionIntervalId);
-
-			onRpcConnectionVerified(getnetworkinfo, getblockchaininfo);
-
-		}).catch(function(err) {
-			utils.logError("32ugegdfsde", err);
-		});
-	}
-}
+			await onRpcConnectionVerified(getnetworkinfo, getblockchaininfo);
+		}
+	},
+	onUnhealthy: () => { global.rpcConnected = false; },
+	onError: (error) => { utils.logError("32ugegdfsde", error); },
+});
 
 async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 	// localservicenames introduced in 0.19
@@ -1061,7 +1054,8 @@ expressApp.use(function(req, res, next) {
 	// make session available in templates
 	res.locals.session = req.session;
 
-	if (config.credentials.rpc && req.session.host == null) {
+	// The configured upstream is authoritative, including for old disconnected sessions.
+	if (config.credentials.rpc) {
 		req.session.host = config.credentials.rpc.host;
 		req.session.port = config.credentials.rpc.port;
 		req.session.username = config.credentials.rpc.username;

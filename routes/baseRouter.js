@@ -382,55 +382,10 @@ router.get("/peers", asyncHandler(async (req, res, next) => {
 	}
 }));
 
-router.post("/connect", function(req, res, next) {
-	let host = req.body.host;
-	let port = req.body.port;
-	let username = req.body.username;
-	let password = req.body.password;
-
-	res.cookie('rpc-host', host);
-	res.cookie('rpc-port', port);
-	res.cookie('rpc-username', username);
-
-	req.session.host = host;
-	req.session.port = port;
-	req.session.username = username;
-
-	let newClient = new bitcoinCore({
-		host: host,
-		port: port,
-		username: username,
-		password: password,
-		timeout: 30000
-	});
-
-	debugLog("created new rpc client: " + newClient);
-
-	global.rpcClient = newClient;
-
-	req.session.userMessage = "<span class='font-weight-bold'>Connected via RPC</span>: " + username + " @ " + host + ":" + port;
-	req.session.userMessageType = "success";
-
-	res.redirect("/");
-});
-
-router.get("/disconnect", function(req, res, next) {
-	res.cookie('rpc-host', "");
-	res.cookie('rpc-port', "");
-	res.cookie('rpc-username', "");
-
-	req.session.host = "";
-	req.session.port = "";
-	req.session.username = "";
-
-	debugLog("destroyed rpc client.");
-
-	global.rpcClient = null;
-
-	req.session.userMessage = "Disconnected from node.";
-	req.session.userMessageType = "success";
-
-	res.redirect("/");
+// The public explorer uses the server-configured node for every visitor.
+// Connection controls must never replace or clear the process-wide RPC client.
+router.all(["/connect", "/disconnect"], function(req, res) {
+	return res.sendStatus(404);
 });
 
 router.get("/changeSetting", function(req, res, next) {
